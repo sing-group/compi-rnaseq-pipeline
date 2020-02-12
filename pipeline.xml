@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline xmlns="http://www.sing-group.org/compi/pipeline-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <version>1.0.0</version>
+	<params>
+		<param name="hisat2_index" shortName="hisat2_index" defaultValue="/opt/hisat2-2.0.5/hisat2-build">The executable of the HISAT2 index command.</param>
+		<param name="hisat2" shortName="hisat2" defaultValue="/opt/hisat2-2.0.5/hisat2">The executable of the HISAT2 command.</param>
+		<param name="samtools" shortName="samtools" defaultValue="/opt/samtools-1.3.1/samtools">The executable of the samtools command.</param>
+		<param name="stringtie" shortName="stringtie" defaultValue="/opt/stringtie-1.3.1c.Linux_x86_64/stringtie">The executable of the StringTie command.</param>
+		<param name="rscript" shortName="rscript" defaultValue="Rscript">The executable of the RScript command.</param>
+		<param name="ballgown_script" shortName="ballgown_script" defaultValue="/opt/ballgown-differential-expression.R">The path to the Ballgown DE script.</param>
+	
+		<param name="genome_fasta" shortName="genome_fasta">The reference genome.</param>
+		<param name="genome_index_dir" shortName="genome_index_dir">The directory where genome indexes should be created.</param>
+		<param name="genome_index" shortName="genome_index">The name for the genome index.</param>
+		<param name="ballgown_dir" shortName="ballgown_dir">The directory where Ballgown files should be placed.</param>
+		<param name="ballgown_file" shortName="ballgown_file">The path to the Ballgown CSV file with the input data.</param>
+		<param name="reference_annotation" shortName="reference_annotation">The path to the reference GTF file for the analysis.</param>
+	
+		<param name="samples_dir" shortName="samples_dir">The directory containing the samples reads.</param>
+		<param name="samples_alignment_dir" shortName="samples_alignment_dir">The directory where aligned samples reads should be placed.</param>
+	
+		<param name="samples_class1" shortName="samples_class1">The names of the files for the first class (without the "_1.fastq.gz" or "_2.fastq.gz" extensions).</param>
+		<param name="samples_class1_label" shortName="samples_class1_label">The label for the first class.</param>
+		<param name="samples_class2" shortName="samples_class2">The names of the files for the second class (without the "_1.fastq.gz" or "_2.fastq.gz" extensions).</param>
+		<param name="samples_class2_label" shortName="samples_class2_label">The label for the second class.</param>
+		<param name="samples" shortName="samples">The names of the files for both classes (without the "_1.fastq.gz" or "_2.fastq.gz" extensions).</param>
+
+		<param name="samples_stringtie_dir" shortName="samples_stringtie_dir">The directory where StringTie files should be placed.</param>
+		<param name="samples_stringtie_mergedannotation" shortName="samples_stringtie_mergedannotation">The path to the merged annotation file created by StringTie.</param>
+		<param name="samples_stringtie_mergelist" shortName="samples_stringtie_mergelist">The path to the merge list file to feed StringTie with.</param>
+	</params>
+	<tasks>
+		<task id="initialization" params="samples_alignment_dir samples_stringtie_dir genome_index_dir ballgown_dir ballgown_file samples_stringtie_mergelist">
+			mkdir -p ${samples_alignment_dir}
+			mkdir -p ${samples_stringtie_dir}
+			mkdir -p ${genome_index_dir}
+			mkdir -p ${ballgown_dir}
+			echo '"ids","type","path"' >> ${ballgown_file}
+			rm -rf ${samples_stringtie_mergelist}
+		</task>
+
+		<task id="genome-index" after="initialization" params="hisat2_index genome_fasta genome_index">
+			${hisat2_index} ${genome_fasta} ${genome_index}
+		</task>
+
+		<foreach id="alignment-stringtie" after="genome-index" of="param" in="samples" as="sample_name"
+		   params="hisat2 genome_index samples_dir samples_alignment_dir samtools stringtie reference_annotation samples_stringtie_dir samples_stringtie_mergelist">
+			${hisat2} --dta -x ${genome_index} -1 ${samples_dir}/${sample_name}_1.fastq.gz -2 ${samples_dir}/${sample_name}_2.fastq.gz -S ${samples_alignment_dir}/${sample_name}.sam
+			${samtools} sort -o ${samples_alignment_dir}/${sample_name}.bam ${samples_alignment_dir}/${sample_name}.sam
+			${stringtie} -G ${reference_annotation} -l ${sample_name} -o ${samples_stringtie_dir}/labeled/${sample_name}.gtf ${samples_alignment_dir}/${sample_name}.bam
+			echo "${samples_stringtie_dir}/labeled/${sample_name}.gtf" >> ${samples_stringtie_mergelist}
+		</foreach>
+
+		<task id="stringtie-merge" after="alignment-stringtie" params="stringtie reference_annotation samples_stringtie_mergedannotation samples_stringtie_mergelist">
+			${stringtie} --merge -G ${reference_annotation} -o ${samples_stringtie_mergedannotation} ${samples_stringtie_mergelist}
+		</task>
+		
+		<foreach id="stringtie-analysis" after="stringtie-merge" of="param" in="samples" as="sample_name"
+		   params="stringtie samples_stringtie_mergedannotation samples_stringtie_dir samples_alignment_dir">
+			${stringtie} -G ${samples_stringtie_mergedannotation} -e -B -o ${samples_stringtie_dir}/${sample_name}/${sample_name}.gtf ${samples_alignment_dir}/${sample_name}.bam
+		</foreach>
+
+		<foreach id="ballgown-class-1" after="stringtie-analysis" of="param" in="samples_class1" as="sample_name"
+		   params="samples_class1_label samples_stringtie_dir ballgown_file">
+			echo "\"${sample_name}\",\"${samples_class1_label}\",\"${samples_stringtie_dir}/${sample_name}\"" >> ${ballgown_file}
+		</foreach>
+		<foreach id="ballgown-class-2" after="ballgown-class-1" of="param" in="samples_class2" as="sample_name"
+		   params="samples_class2_label samples_stringtie_dir ballgown_file">
+			echo "\"${sample_name}\",\"${samples_class2_label}\",\"${samples_stringtie_dir}/${sample_name}\"" >> ${ballgown_file}
+		</foreach>
+		<task id="ballgown-analysis" after="ballgown-class-2" params="rscript ballgown_script ballgown_dir">
+			${rscript} ${ballgown_script} ${ballgown_dir} phenotype-data png 1000 1000 TRUE
+		</task>
+	</tasks>
+    <metadata>
+        <task-description id="initialization">Initializes the directories for the pipeline outputs and creates the ballgown CSV file to store the input data.</task-description>
+        <task-description id="genome-index">Creates the genome index for the reference genome.</task-description>
+        <task-description id="alignment-stringtie">Aligns each pair of FASTQ files using HISAT2, converts the alignments into BAM format using samtools and runs StringTie to obtain annotate the alignments.</task-description>
+        <task-description id="stringtie-merge">Merges the StringTie files into a single annotation file.</task-description>
+        <task-description id="stringtie-analysis">Re-analyzes the aligned samples using the merged annotation file.</task-description>
+        <task-description id="ballgown-class-1">Stores the class 1 samples into the ballgown CSV input file.</task-description>
+        <task-description id="ballgown-class-2">Stores the class 2 samples into the ballgown CSV input file.</task-description>
+        <task-description id="ballgown-analysis">Executes the differential expression analysis between class 1 and class 2 samples using ballgown.</task-description>
+    </metadata>
+</pipeline>

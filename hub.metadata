@@ -1,0 +1,5 @@
+#Wed Feb 12 16:40:36 CET 2020
+url.bitbucket=
+url.gitlab=
+url.dockerhub=https://hub.docker.com/r/singgroup/compi-rnaseq
+url.github=https://github.com/sing-group/compi-rnaseq-pipeline
