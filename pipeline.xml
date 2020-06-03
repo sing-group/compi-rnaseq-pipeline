@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pipeline xmlns="http://www.sing-group.org/compi/pipeline-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 	<params>
 		<param name="hisat2_index" shortName="hisat2_index" defaultValue="/opt/hisat2-2.0.5/hisat2-build">The executable of the HISAT2 index command.</param>
 		<param name="hisat2" shortName="hisat2" defaultValue="/opt/hisat2-2.0.5/hisat2">The executable of the HISAT2 command.</param>
@@ -43,15 +43,21 @@
 			${hisat2_index} ${genome_fasta} ${genome_index}
 		</task>
 
-		<foreach id="alignment-stringtie" after="genome-index" of="param" in="samples" as="sample_name"
+		<foreach id="alignment" after="genome-index" of="param" in="samples" as="sample_name"
 		   params="hisat2 genome_index samples_dir samples_alignment_dir samtools stringtie reference_annotation samples_stringtie_dir samples_stringtie_mergelist">
 			${hisat2} --dta -x ${genome_index} -1 ${samples_dir}/${sample_name}_1.fastq.gz -2 ${samples_dir}/${sample_name}_2.fastq.gz -S ${samples_alignment_dir}/${sample_name}.sam
+		</foreach>
+		<foreach id="samtools" after="*alignment" of="param" in="samples" as="sample_name"
+		   params="hisat2 genome_index samples_dir samples_alignment_dir samtools stringtie reference_annotation samples_stringtie_dir samples_stringtie_mergelist">
 			${samtools} sort -o ${samples_alignment_dir}/${sample_name}.bam ${samples_alignment_dir}/${sample_name}.sam
+		</foreach>
+		<foreach id="stringtie" after="*samtools" of="param" in="samples" as="sample_name"
+		   params="hisat2 genome_index samples_dir samples_alignment_dir samtools stringtie reference_annotation samples_stringtie_dir samples_stringtie_mergelist">
 			${stringtie} -G ${reference_annotation} -l ${sample_name} -o ${samples_stringtie_dir}/labeled/${sample_name}.gtf ${samples_alignment_dir}/${sample_name}.bam
 			echo "${samples_stringtie_dir}/labeled/${sample_name}.gtf" >> ${samples_stringtie_mergelist}
 		</foreach>
 
-		<task id="stringtie-merge" after="alignment-stringtie" params="stringtie reference_annotation samples_stringtie_mergedannotation samples_stringtie_mergelist">
+		<task id="stringtie-merge" after="stringtie" params="stringtie reference_annotation samples_stringtie_mergedannotation samples_stringtie_mergelist">
 			${stringtie} --merge -G ${reference_annotation} -o ${samples_stringtie_mergedannotation} ${samples_stringtie_mergelist}
 		</task>
 		
@@ -75,7 +81,9 @@
     <metadata>
         <task-description id="initialization">Initializes the directories for the pipeline outputs and creates the ballgown CSV file to store the input data.</task-description>
         <task-description id="genome-index">Creates the genome index for the reference genome.</task-description>
-        <task-description id="alignment-stringtie">Aligns each pair of FASTQ files using HISAT2, converts the alignments into BAM format using samtools and runs StringTie to obtain annotate the alignments.</task-description>
+        <task-description id="alignment">Aligns each pair of FASTQ files using HISAT2.</task-description>
+        <task-description id="samtools">Converts the HISAT2 alignments into BAM format using samtools.</task-description>
+        <task-description id="stringtie">Runs StringTie to annotate the alignments.</task-description>
         <task-description id="stringtie-merge">Merges the StringTie files into a single annotation file.</task-description>
         <task-description id="stringtie-analysis">Re-analyzes the aligned samples using the merged annotation file.</task-description>
         <task-description id="ballgown-class-1">Stores the class 1 samples into the ballgown CSV input file.</task-description>
