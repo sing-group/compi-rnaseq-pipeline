@@ -3,7 +3,7 @@
     "options": {
         "env": {
             "data_directory": "/media/hlfernandez/Almacenamiento/Data/Collaborations/Rosalinda/data-compi-rnaseq-pipeline-1.0.0/",
-            "single_task": "join-counts"
+            "single_task": "initialization"
         }
     },
     "tasks": [

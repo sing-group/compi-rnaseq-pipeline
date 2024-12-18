@@ -20,6 +20,7 @@
 		<param name="genome_index" shortName="genome_index" defaultValue="genome_index" global="true">The name for the genome index.</param>
 	
 		<param name="samples_dir" shortName="samples_dir" defaultValue="samples" global="true">The directory containing the samples reads (relative to the working directory).</param>
+		<param name="samples_files_list" shortName="samples_files_list" defaultValue="compi/samples.txt" global="true">The file where the merged htseq-count results are stored.</param>
 		<param name="metadata_file" shortName="metadata_file" defaultValue="metadata.tsv" global="true">The metadata file name (relative to the samples directory).</param>
 		<param name="samples_alignment_dir" shortName="samples_alignment_dir" defaultValue="compi/aligned-reads" global="true">The directory where aligned samples reads should be placed.</param>
 		<param name="samples_htseqcount_dir" shortName="samples_htseqcount_dir" defaultValue="compi/htseq-count" global="true">The directory where htseq-count results should be placed.</param>
@@ -32,13 +33,28 @@
 		<task id="genome-index" after="initialization">
 			${hisat2_index} ${working_dir}/${genome_fasta} ${working_dir}/${genome_index_dir}/${genome_index}
 		</task>
-		<foreach id="alignment" after="genome-index" of="command" in="${scripts_dir}/list_samples.sh ${working_dir}/${samples_dir}/${metadata_file}" as="sample_name">
+		<foreach 
+			id="alignment" after="genome-index" 
+			of="command" 
+			in="${scripts_dir}/list_samples.sh ${working_dir}/${samples_dir}/${metadata_file} ${working_dir}/${samples_files_list}" 
+			as="sample_name"
+		>
 			${hisat2} --dta -x ${working_dir}/${genome_index_dir}/${genome_index} -1 ${working_dir}/${samples_dir}/${sample_name}_1.fastq.gz -2 ${working_dir}/${samples_dir}/${sample_name}_2.fastq.gz -S ${working_dir}/${samples_alignment_dir}/${sample_name}.sam
 		</foreach>
-		<foreach id="samtools" after="*alignment" of="command" in="${scripts_dir}/list_samples.sh ${working_dir}/${samples_dir}/${metadata_file}" as="sample_name">
+		<foreach 
+			id="samtools" after="*alignment"
+			of="command" 
+			in="${scripts_dir}/list_samples.sh ${working_dir}/${samples_dir}/${metadata_file} ${working_dir}/${samples_files_list}" 
+			as="sample_name"
+		>
 			${samtools} sort -o ${working_dir}/${samples_alignment_dir}/${sample_name}.bam ${working_dir}/${samples_alignment_dir}/${sample_name}.sam
 		</foreach>
-		<foreach id="htseq-count" after="*samtools" of="command" in="${scripts_dir}/list_samples.sh ${working_dir}/${samples_dir}/${metadata_file}" as="sample_name">
+		<foreach 
+			id="htseq-count" after="*samtools"
+			of="command" 
+			in="${scripts_dir}/list_samples.sh ${working_dir}/${samples_dir}/${metadata_file} ${working_dir}/${samples_files_list}" 
+			as="sample_name"
+		>
 			${htseq_count} --format bam --order pos --mode intersection-strict --stranded reverse --minaqual 1 --type exon --idattr gene_id ${working_dir}/${samples_alignment_dir}/${sample_name}.bam ${working_dir}/${reference_annotation} > ${working_dir}/${samples_htseqcount_dir}/${sample_name}.tsv
 		</foreach>
 		<task id="join-counts" after="htseq-count">

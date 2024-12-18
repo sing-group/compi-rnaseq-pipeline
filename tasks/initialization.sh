@@ -3,6 +3,7 @@
 mkdir -p ${working_dir}/${samples_alignment_dir}
 mkdir -p ${working_dir}/${samples_htseqcount_dir}
 mkdir -p ${working_dir}/${genome_index_dir}
+touch ${working_dir}/${samples_files_list}
 
 for image in $(printenv | grep '_image=' | grep -v "grep" | cut -f1 -d'='); do
     image_value=${!image}
