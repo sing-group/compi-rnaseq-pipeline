@@ -1,93 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pipeline xmlns="http://www.sing-group.org/compi/pipeline-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <version>1.1.0</version>
+    <version>2.0.0-SNAPSHOT</version>
 	<params>
-		<param name="hisat2_index" shortName="hisat2_index" defaultValue="/opt/hisat2-2.0.5/hisat2-build">The executable of the HISAT2 index command.</param>
-		<param name="hisat2" shortName="hisat2" defaultValue="/opt/hisat2-2.0.5/hisat2">The executable of the HISAT2 command.</param>
-		<param name="samtools" shortName="samtools" defaultValue="/opt/samtools-1.3.1/samtools">The executable of the samtools command.</param>
-		<param name="stringtie" shortName="stringtie" defaultValue="/opt/stringtie-1.3.1c.Linux_x86_64/stringtie">The executable of the StringTie command.</param>
-		<param name="rscript" shortName="rscript" defaultValue="Rscript">The executable of the RScript command.</param>
-		<param name="ballgown_script" shortName="ballgown_script" defaultValue="/opt/ballgown-differential-expression.R">The path to the Ballgown DE script.</param>
-	
-		<param name="genome_fasta" shortName="genome_fasta">The reference genome.</param>
-		<param name="genome_index_dir" shortName="genome_index_dir">The directory where genome indexes should be created.</param>
-		<param name="genome_index" shortName="genome_index">The name for the genome index.</param>
-		<param name="ballgown_dir" shortName="ballgown_dir">The directory where Ballgown files should be placed.</param>
-		<param name="ballgown_file" shortName="ballgown_file">The path to the Ballgown CSV file with the input data.</param>
-		<param name="reference_annotation" shortName="reference_annotation">The path to the reference GTF file for the analysis.</param>
-	
-		<param name="samples_dir" shortName="samples_dir">The directory containing the samples reads.</param>
-		<param name="samples_alignment_dir" shortName="samples_alignment_dir">The directory where aligned samples reads should be placed.</param>
-	
-		<param name="samples_class1" shortName="samples_class1">The names of the files for the first class (without the "_1.fastq.gz" or "_2.fastq.gz" extensions).</param>
-		<param name="samples_class1_label" shortName="samples_class1_label">The label for the first class.</param>
-		<param name="samples_class2" shortName="samples_class2">The names of the files for the second class (without the "_1.fastq.gz" or "_2.fastq.gz" extensions).</param>
-		<param name="samples_class2_label" shortName="samples_class2_label">The label for the second class.</param>
-		<param name="samples" shortName="samples">The names of the files for both classes (without the "_1.fastq.gz" or "_2.fastq.gz" extensions).</param>
+		<param name="working_dir" shortName="working_dir" global="true">The executable of the HISAT2 index command.</param>
 
-		<param name="samples_stringtie_dir" shortName="samples_stringtie_dir">The directory where StringTie files should be placed.</param>
-		<param name="samples_stringtie_mergedannotation" shortName="samples_stringtie_mergedannotation">The path to the merged annotation file created by StringTie.</param>
-		<param name="samples_stringtie_mergelist" shortName="samples_stringtie_mergelist">The path to the merge list file to feed StringTie with.</param>
+		<param name="hisat2_index" shortName="hisat2_index" defaultValue="/opt/hisat2-2.0.5/hisat2-build" global="true">The executable of the HISAT2 index command.</param>
+		<param name="genome_index_image" shortName="genome_index_image" defaultValue="singgroup/dewe:1.3.0" global="true">The executable of the HISAT2 command.</param>
+		<param name="hisat2" shortName="hisat2" defaultValue="/opt/hisat2-2.0.5/hisat2"  global="true">The executable of the HISAT2 command.</param>
+		<param name="alignment_image" shortName="alignment_image" defaultValue="singgroup/dewe:1.3.0" global="true">The executable of the HISAT2 command.</param>
+		<param name="samtools" shortName="samtools" defaultValue="/opt/samtools-1.3.1/samtools" global="true">The executable of the samtools command.</param>
+		<param name="samtools_image" shortName="samtools_image" defaultValue="singgroup/dewe:1.3.0" global="true">The executable of the HISAT2 command.</param>
+		<param name="htseq_count" shortName="htseq_count" defaultValue="htseq-count" global="true">The executable of the htseq-count command.</param>
+		<param name="htseq_count_image" shortName="htseq_count_image" defaultValue="pegi3s/htseq:0.12.3" global="true">The HTSeq Docker image</param>
+
+		<param name="genome_fasta" shortName="genome_fasta" global="true">The reference genome.</param>
+		<param name="reference_annotation" shortName="reference_annotation" global="true">The path to the reference GTF file for the analysis.</param>
+
+		<param name="genome_index_dir" shortName="genome_index_dir" defaultValue="compi/hisat2-indexes" global="true">The directory where genome indexes should be created.</param>
+		<param name="genome_index" shortName="genome_index" defaultValue="genome_index" global="true">The name for the genome index.</param>
+	
+		<param name="samples_dir" shortName="samples_dir" defaultValue="samples" global="true">The directory containing the samples reads (relative to the working directory).</param>
+		<param name="metadata_file" shortName="metadata_file" defaultValue="metadata.tsv" global="true">The metadata file name (relative to the samples directory).</param>
+		<param name="samples_alignment_dir" shortName="samples_alignment_dir" defaultValue="compi/aligned-reads" global="true">The directory where aligned samples reads should be placed.</param>
+		<param name="samples_htseqcount_dir" shortName="samples_htseqcount_dir" defaultValue="compi/htseq-count" global="true">The directory where htseq-count results should be placed.</param>
+		<param name="all_counts_file" shortName="all_counts_file" defaultValue="compi/counts.tsv" global="true">The file where the merged htseq-count results are stored.</param>
+
+		<param name="scripts_dir" shortName="sd" defaultValue="/scripts" global="true">Path of the directory containing the pipeline scripts.</param>
 	</params>
 	<tasks>
-		<task id="initialization" params="samples_alignment_dir samples_stringtie_dir genome_index_dir ballgown_dir ballgown_file samples_stringtie_mergelist">
-			mkdir -p ${samples_alignment_dir}
-			mkdir -p ${samples_stringtie_dir}
-			mkdir -p ${genome_index_dir}
-			mkdir -p ${ballgown_dir}
-			echo '"ids","type","path"' >> ${ballgown_file}
-			rm -rf ${samples_stringtie_mergelist}
+		<task id="initialization" src="tasks/initialization.sh"></task>
+		<task id="genome-index" after="initialization">
+			${hisat2_index} ${working_dir}/${genome_fasta} ${working_dir}/${genome_index_dir}/${genome_index}
 		</task>
-
-		<task id="genome-index" after="initialization" params="hisat2_index genome_fasta genome_index">
-			${hisat2_index} ${genome_fasta} ${genome_index}
-		</task>
-
-		<foreach id="alignment" after="genome-index" of="param" in="samples" as="sample_name"
-		   params="hisat2 genome_index samples_dir samples_alignment_dir samtools stringtie reference_annotation samples_stringtie_dir samples_stringtie_mergelist">
-			${hisat2} --dta -x ${genome_index} -1 ${samples_dir}/${sample_name}_1.fastq.gz -2 ${samples_dir}/${sample_name}_2.fastq.gz -S ${samples_alignment_dir}/${sample_name}.sam
+		<foreach id="alignment" after="genome-index" of="command" in="${scripts_dir}/list_samples.sh ${working_dir}/${samples_dir}/${metadata_file}" as="sample_name">
+			${hisat2} --dta -x ${working_dir}/${genome_index_dir}/${genome_index} -1 ${working_dir}/${samples_dir}/${sample_name}_1.fastq.gz -2 ${working_dir}/${samples_dir}/${sample_name}_2.fastq.gz -S ${working_dir}/${samples_alignment_dir}/${sample_name}.sam
 		</foreach>
-		<foreach id="samtools" after="*alignment" of="param" in="samples" as="sample_name"
-		   params="hisat2 genome_index samples_dir samples_alignment_dir samtools stringtie reference_annotation samples_stringtie_dir samples_stringtie_mergelist">
-			${samtools} sort -o ${samples_alignment_dir}/${sample_name}.bam ${samples_alignment_dir}/${sample_name}.sam
+		<foreach id="samtools" after="*alignment" of="command" in="${scripts_dir}/list_samples.sh ${working_dir}/${samples_dir}/${metadata_file}" as="sample_name">
+			${samtools} sort -o ${working_dir}/${samples_alignment_dir}/${sample_name}.bam ${working_dir}/${samples_alignment_dir}/${sample_name}.sam
 		</foreach>
-		<foreach id="stringtie" after="*samtools" of="param" in="samples" as="sample_name"
-		   params="hisat2 genome_index samples_dir samples_alignment_dir samtools stringtie reference_annotation samples_stringtie_dir samples_stringtie_mergelist">
-			${stringtie} -G ${reference_annotation} -l ${sample_name} -o ${samples_stringtie_dir}/labeled/${sample_name}.gtf ${samples_alignment_dir}/${sample_name}.bam
-			echo "${samples_stringtie_dir}/labeled/${sample_name}.gtf" >> ${samples_stringtie_mergelist}
+		<foreach id="htseq-count" after="*samtools" of="command" in="${scripts_dir}/list_samples.sh ${working_dir}/${samples_dir}/${metadata_file}" as="sample_name">
+			${htseq_count} --format bam --order pos --mode intersection-strict --stranded reverse --minaqual 1 --type exon --idattr gene_id ${working_dir}/${samples_alignment_dir}/${sample_name}.bam ${working_dir}/${reference_annotation} > ${working_dir}/${samples_htseqcount_dir}/${sample_name}.tsv
 		</foreach>
-
-		<task id="stringtie-merge" after="stringtie" params="stringtie reference_annotation samples_stringtie_mergedannotation samples_stringtie_mergelist">
-			${stringtie} --merge -G ${reference_annotation} -o ${samples_stringtie_mergedannotation} ${samples_stringtie_mergelist}
-		</task>
-		
-		<foreach id="stringtie-analysis" after="stringtie-merge" of="param" in="samples" as="sample_name"
-		   params="stringtie samples_stringtie_mergedannotation samples_stringtie_dir samples_alignment_dir">
-			${stringtie} -G ${samples_stringtie_mergedannotation} -e -B -o ${samples_stringtie_dir}/${sample_name}/${sample_name}.gtf ${samples_alignment_dir}/${sample_name}.bam
-		</foreach>
-
-		<foreach id="ballgown-class-1" after="stringtie-analysis" of="param" in="samples_class1" as="sample_name"
-		   params="samples_class1_label samples_stringtie_dir ballgown_file">
-			echo "\"${sample_name}\",\"${samples_class1_label}\",\"${samples_stringtie_dir}/${sample_name}\"" >> ${ballgown_file}
-		</foreach>
-		<foreach id="ballgown-class-2" after="ballgown-class-1" of="param" in="samples_class2" as="sample_name"
-		   params="samples_class2_label samples_stringtie_dir ballgown_file">
-			echo "\"${sample_name}\",\"${samples_class2_label}\",\"${samples_stringtie_dir}/${sample_name}\"" >> ${ballgown_file}
-		</foreach>
-		<task id="ballgown-analysis" after="ballgown-class-2" params="rscript ballgown_script ballgown_dir">
-			${rscript} ${ballgown_script} ${ballgown_dir} phenotype-data png 1000 1000 TRUE
+		<task id="join-counts" after="htseq-count">
+			tasks/join_all.sh ${working_dir}/${samples_htseqcount_dir} ${working_dir}/${all_counts_file}
 		</task>
 	</tasks>
     <metadata>
-        <task-description id="initialization">Initializes the directories for the pipeline outputs and creates the ballgown CSV file to store the input data.</task-description>
+        <task-description id="initialization">Initializes the directories for the pipeline outputs and pulls the Docker images.</task-description>
         <task-description id="genome-index">Creates the genome index for the reference genome.</task-description>
         <task-description id="alignment">Aligns each pair of FASTQ files using HISAT2.</task-description>
         <task-description id="samtools">Converts the HISAT2 alignments into BAM format using samtools.</task-description>
-        <task-description id="stringtie">Runs StringTie to annotate the alignments.</task-description>
-        <task-description id="stringtie-merge">Merges the StringTie files into a single annotation file.</task-description>
-        <task-description id="stringtie-analysis">Re-analyzes the aligned samples using the merged annotation file.</task-description>
-        <task-description id="ballgown-class-1">Stores the class 1 samples into the ballgown CSV input file.</task-description>
-        <task-description id="ballgown-class-2">Stores the class 2 samples into the ballgown CSV input file.</task-description>
-        <task-description id="ballgown-analysis">Executes the differential expression analysis between class 1 and class 2 samples using ballgown.</task-description>
+        <task-description id="htseq-count">Runs htseq-count to obtain the raw counts for subsequent analyses.</task-description>
     </metadata>
 </pipeline>

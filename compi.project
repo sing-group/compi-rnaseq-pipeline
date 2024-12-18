@@ -1,6 +1,6 @@
 #
 #Mon Sep 23 16:37:48 CEST 2019
-compi.version=1.3.0
+compi.version=1.5.2
 hub.pipeline.alias=compi-rnaseq-pipeline
 hub.pipeline.id=5d09fb2a1713f3002fde86e2
 image.name=singgroup/compi-rnaseq

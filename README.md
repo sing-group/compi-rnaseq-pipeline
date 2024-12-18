@@ -19,4 +19,3 @@ Alternatively, it is also possible to execute the pipeline using Singularity. To
 ```bash
 singularity run -B /path/to/rna-seq-docker/data/:/data docker://singgroup/compi-rnaseq -pa /data/parameters
 ```
-

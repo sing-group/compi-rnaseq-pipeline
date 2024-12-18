@@ -1,0 +1,33 @@
+{
+    "version": "2.0.0",
+    "options": {
+        "env": {
+            "data_directory": "/media/hlfernandez/Almacenamiento/Data/Collaborations/Rosalinda/data-compi-rnaseq-pipeline-1.0.0/",
+            "single_task": "join-counts"
+        }
+    },
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "compi-dk build -tv"
+        },
+        {
+            "label": "run",
+            "type": "shell",
+            "command": "docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v ${data_directory}:${data_directory} singgroup/compi-rnaseq -pa ${data_directory}/parameters -r runner.xml"
+        },
+        {
+            "label": "build-and-run",
+            "type": "shell",
+            "dependsOn": ["build", "run"],
+            "dependsOrder": "sequence"
+        },
+        {
+            "label": "run single task",
+            "type": "shell",
+            "command": "docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v ${data_directory}:${data_directory} singgroup/compi-rnaseq -pa ${data_directory}/parameters -r runner.xml -st ${single_task} -o --logs ${data_directory}/compi/logs",
+            "dependsOn": "build",
+        }
+    ]
+}
