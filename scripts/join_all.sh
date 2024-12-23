@@ -57,7 +57,7 @@ echo "Merge complete. Output written to $output_file"
 # Extract the filenames without extensions for the header
 header="gene"
 for file in "${files[@]}"; do
-    header="$header $(basename "$file" .tsv)"
+    header="$header\t$(basename "$file" .tsv)"
 done
 
 # Prepend the header to the output file

@@ -12,6 +12,7 @@ tail -n +2 ${working_dir}/${contrasts_file} | while IFS= read -r line; do
 
     head -1 ${working_dir}/${samples_dir}/${metadata_file} > ${working_dir}/${dea_dir}/${dir}/metadata.tsv
     cat ${working_dir}/${samples_dir}/${metadata_file} | grep -E -w "${word_grep}" >> ${working_dir}/${dea_dir}/${dir}/metadata.tsv
+    echo ${reference} > ${working_dir}/${dea_dir}/${dir}/reference.txt
 
     ${scripts_dir}/join_all.sh ${working_dir}/${samples_htseqcount_dir} ${working_dir}/${dea_dir}/${dir}/counts.tsv ${working_dir}/${dea_dir}/${dir}/metadata.tsv
 done

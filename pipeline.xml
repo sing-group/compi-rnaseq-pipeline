@@ -12,6 +12,7 @@
 		<param name="samtools_image" shortName="samtools_image" defaultValue="singgroup/dewe:1.3.0" global="true">The executable of the HISAT2 command.</param>
 		<param name="htseq_count" shortName="htseq_count" defaultValue="htseq-count" global="true">The executable of the htseq-count command.</param>
 		<param name="htseq_count_image" shortName="htseq_count_image" defaultValue="pegi3s/htseq:0.12.3" global="true">The HTSeq Docker image</param>
+		<param name="delite_image" shortName="delite_image" defaultValue="bioinfolabcro/delite:v.1.2" global="true">The DElite Docker image</param>
 
 		<!-- User input files and directories -->
 		<param name="genome_fasta" shortName="genome_fasta" global="true">The reference genome.</param>
@@ -62,6 +63,19 @@
 			${htseq_count} --format bam --order pos --mode intersection-strict --stranded reverse --minaqual 1 --type exon --idattr gene_id ${working_dir}/${samples_alignment_dir}/${sample_name}.bam ${working_dir}/${reference_annotation} > ${working_dir}/${samples_htseqcount_dir}/${sample_name}.tsv
 		</foreach>
 		<task id="prepare-deas" after="htseq-count" src="tasks/prepare_deas.sh"></task>
+		<foreach id="delite" after="prepare-deas"
+			of="command"
+			in="ls ${working_dir}/${dea_dir}"
+			as="contrast_dir"
+		>
+			reference=$(cat ${working_dir}/${dea_dir}/${contrast_dir}/reference.txt)
+
+			docker run --rm -v "${working_dir}/${dea_dir}/${contrast_dir}:/home/DElite" ${delite_image} \
+				counts_file=counts.tsv \
+				metadata_file=metadata.tsv \
+				condition=class \
+				reference_condition=${reference}
+		</foreach>
 	</tasks>
     <metadata>
         <task-description id="initialization">Initializes the directories for the pipeline outputs and pulls the Docker images.</task-description>
