@@ -4,6 +4,7 @@ mkdir -p ${working_dir}/${samples_alignment_dir}
 mkdir -p ${working_dir}/${samples_htseqcount_dir}
 mkdir -p ${working_dir}/${genome_index_dir}
 mkdir -p ${working_dir}/${dea_dir}
+mkdir -p ${working_dir}/compi/scripts
 touch ${working_dir}/${samples_files_list}
 
 # Pulls the Docker images

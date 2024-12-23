@@ -13,6 +13,7 @@
 		<param name="htseq_count" shortName="htseq_count" defaultValue="htseq-count" global="true">The executable of the htseq-count command.</param>
 		<param name="htseq_count_image" shortName="htseq_count_image" defaultValue="pegi3s/htseq:0.12.3" global="true">The HTSeq Docker image</param>
 		<param name="delite_image" shortName="delite_image" defaultValue="bioinfolabcro/delite:v.1.2" global="true">The DElite Docker image</param>
+		<param name="sva_image" shortName="sva_image" defaultValue="pegi3s/r_sva:3.54.0" global="true">The R SVA Docker image</param>
 
 		<!-- User input files and directories -->
 		<param name="genome_fasta" shortName="genome_fasta" global="true">The reference genome.</param>
@@ -21,6 +22,7 @@
 		<param name="genome_index_dir" shortName="genome_index_dir" defaultValue="compi/hisat2-indexes" global="true">The directory where genome indexes should be created.</param>
 		<param name="genome_index" shortName="genome_index" defaultValue="genome_index" global="true">The name for the genome index.</param>
 		<param name="user_contrasts_file" shortName="user_contrasts_file" defaultValue="config/contrasts.tsv" global="true">The path to the contrasts file provided by the user (relative to the working directory).</param>
+		<param name="batch_correction" shortName="batch_correction" defaultValue="none" global="true">The factor (column in metadata) for batch correction (or "interaction" to use a combination of all of them). If "none", no batch correction is applied.</param>
 	
 		<param name="samples_dir" shortName="samples_dir" defaultValue="samples" global="true">The directory containing the samples reads (relative to the working directory).</param>
 		<param name="metadata_file" shortName="metadata_file" defaultValue="metadata.tsv" global="true">The metadata file name (relative to the samples directory).</param>
@@ -63,7 +65,13 @@
 			${htseq_count} --format bam --order pos --mode intersection-strict --stranded reverse --minaqual 1 --type exon --idattr gene_id ${working_dir}/${samples_alignment_dir}/${sample_name}.bam ${working_dir}/${reference_annotation} > ${working_dir}/${samples_htseqcount_dir}/${sample_name}.tsv
 		</foreach>
 		<task id="prepare-deas" after="htseq-count" src="tasks/prepare_deas.sh"></task>
-		<foreach id="delite" after="prepare-deas"
+		<foreach id="batch-correction" after="prepare-deas" src="tasks/batch_correction.sh"
+			of="command"
+			in="ls ${working_dir}/${dea_dir}"
+			as="contrast_dir"
+			if="[[ ${batch_correction} != 'none' ]]"
+		></foreach>
+		<foreach id="delite" after="batch-correction"
 			of="command"
 			in="ls ${working_dir}/${dea_dir}"
 			as="contrast_dir"
@@ -83,5 +91,8 @@
         <task-description id="alignment">Aligns each pair of FASTQ files using HISAT2.</task-description>
         <task-description id="samtools">Converts the HISAT2 alignments into BAM format using samtools.</task-description>
         <task-description id="htseq-count">Runs htseq-count to obtain the raw counts for subsequent analyses.</task-description>
+        <task-description id="prepare-deas">Creates one DEA folder for each specified contrast.</task-description>
+        <task-description id="batch-correction">Performs batch correction in each DEA folder.</task-description>
+        <task-description id="delite">Runs DElite in each DEA folder.</task-description>
     </metadata>
 </pipeline>
