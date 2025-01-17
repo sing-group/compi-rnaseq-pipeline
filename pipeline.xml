@@ -11,7 +11,7 @@
 		<param name="samtools" shortName="samtools" defaultValue="/opt/samtools-1.3.1/samtools" global="true">The executable of the samtools command.</param>
 		<param name="samtools_image" shortName="samtools_image" defaultValue="singgroup/dewe:1.3.0" global="true">The executable of the HISAT2 command.</param>
 		<param name="htseq_count" shortName="htseq_count" defaultValue="htseq-count" global="true">The executable of the htseq-count command.</param>
-		<param name="htseq_count_image" shortName="htseq_count_image" defaultValue="pegi3s/htseq:0.12.3" global="true">The HTSeq Docker image</param>
+		<param name="htseq_count_image" shortName="htseq_count_image" defaultValue="pegi3s/htseq:2.0.9" global="true">The HTSeq Docker image</param>
 		<param name="feature_counts" shortName="feature_counts" defaultValue="featureCounts" global="true">The executable of the featureCounts command.</param>
 		<param name="feature_counts_image" shortName="htfeature_counts_imageseq_count_image" defaultValue="pegi3s/feature-counts:2.0.0" global="true">The featureCounts Docker image</param>
 		<param name="delite_image" shortName="delite_image" defaultValue="bioinfolabcro/delite:v.1.2.2" global="true">The DElite Docker image</param>
