@@ -81,7 +81,7 @@
 			as="sample_name"
 			if="[[ ${counts_method} == 'featurecounts' ]]"
 		>
-			${feature_counts} -F GTF -a ${working_dir}/${reference_annotation} -o ${working_dir}/${samples_feature_counts_dir}/${sample_name}.txt -t exon -g gene_id -s 2 -Q 1 -p --primary ${working_dir}/${samples_alignment_dir}/${sample_name}.bam
+			${feature_counts} -F GTF -a ${working_dir}/${reference_annotation} -o ${working_dir}/${samples_feature_counts_dir}/${sample_name}.txt -t exon -g gene_id -s 2 -Q 1 -B -p --primary ${working_dir}/${samples_alignment_dir}/${sample_name}.bam
 		</foreach>
 		<foreach 
 			id="feature-counts-postprocessing" after="*feature-counts"
