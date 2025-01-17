@@ -27,7 +27,9 @@
 		<param name="genome_index_dir" shortName="genome_index_dir" defaultValue="compi/hisat2-indexes" global="true">The directory where genome indexes should be created.</param>
 		<param name="genome_index" shortName="genome_index" defaultValue="genome_index" global="true">The name for the genome index.</param>
 		<param name="user_contrasts_file" shortName="user_contrasts_file" defaultValue="config/contrasts.tsv" global="true">The path to the contrasts file provided by the user (relative to the working directory).</param>
+		
 		<param name="batch_correction" shortName="batch_correction" defaultValue="none" global="true">The factor (column in metadata) for batch correction (or "interaction" to use a combination of all of them). If "none", no batch correction is applied.</param>
+		<param name="counts_method" shortName="counts_method" defaultValue="featurecounts" global="true">The software for counting reads, either featurecounts or htseq.</param>
 	
 		<param name="samples_dir" shortName="samples_dir" defaultValue="samples" global="true">The directory containing the samples reads (relative to the working directory).</param>
 		<param name="metadata_file" shortName="metadata_file" defaultValue="metadata.tsv" global="true">The metadata file name (relative to the samples directory).</param>
@@ -68,6 +70,7 @@
 			of="command" 
 			in="${scripts_dir}/list_samples.sh ${working_dir}/${samples_dir}/${metadata_file} ${working_dir}/${samples_files_list}" 
 			as="sample_name"
+			if="[[ ${counts_method} == 'htseq' ]]"
 		>
 			${htseq_count} --format bam --order pos --mode intersection-strict --stranded reverse --minaqual 1 --type exon --idattr gene_id ${working_dir}/${samples_alignment_dir}/${sample_name}.bam ${working_dir}/${reference_annotation} > ${working_dir}/${samples_htseqcount_dir}/${sample_name}.tsv
 		</foreach>
@@ -76,6 +79,7 @@
 			of="command" 
 			in="${scripts_dir}/list_samples.sh ${working_dir}/${samples_dir}/${metadata_file} ${working_dir}/${samples_files_list}" 
 			as="sample_name"
+			if="[[ ${counts_method} == 'featurecounts' ]]"
 		>
 			${feature_counts} -F GTF -a ${working_dir}/${reference_annotation} -o ${working_dir}/${samples_feature_counts_dir}/${sample_name}.txt -t exon -g gene_id -s 2 -Q 1 -p --primary ${working_dir}/${samples_alignment_dir}/${sample_name}.bam
 		</foreach>
@@ -84,6 +88,7 @@
 			of="command" 
 			in="${scripts_dir}/list_samples.sh ${working_dir}/${samples_dir}/${metadata_file} ${working_dir}/${samples_files_list}" 
 			as="sample_name"
+			if="[[ ${counts_method} == 'featurecounts' ]]"
 		>
 			awk 'BEGIN{OFS="\t"} NR>1 {print $1, $NF}' ${working_dir}/${samples_feature_counts_dir}/${sample_name}.txt > ${working_dir}/${samples_feature_counts_dir}/${sample_name}_unsorted.tsv
 			tail -n +2 ${working_dibatch-correction-all
