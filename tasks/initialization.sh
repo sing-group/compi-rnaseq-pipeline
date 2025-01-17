@@ -2,6 +2,8 @@
 
 mkdir -p ${working_dir}/${samples_alignment_dir}
 mkdir -p ${working_dir}/${samples_htseqcount_dir}
+mkdir -p ${working_dir}/${samples_feature_counts_dir}
+mkdir -p ${working_dir}/${all_counts_dir}
 mkdir -p ${working_dir}/${genome_index_dir}
 mkdir -p ${working_dir}/${dea_dir}
 mkdir -p ${working_dir}/compi/scripts

@@ -1,6 +1,11 @@
 FROM pegi3s/docker:20.04
 LABEL maintainer="hlfernandez"
 
+# INSTALL DEPENDENCIES
+RUN apt update -y && \
+    apt install python3-pip -y && \
+    pip install pandas
+
 # INSTALL COMPI
 ADD image-files/compi.tar.gz /
 

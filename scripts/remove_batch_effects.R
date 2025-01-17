@@ -51,31 +51,6 @@ batch_correct_with_combat_seq <- function(counts_data, metadata, batch_factors =
   return(list(metadata, corrected_counts))
 }
 
-# PCA plotting function with zero variance gene removal
-plot_pca <- function(data, metadata, title) {
-  # Remove genes with zero variance
-  data <- data[apply(data, 1, var) > 1e-6, ]  # Apply variance filter to rows (genes)
-  
-  # Perform PCA
-  pca <- prcomp(t(data), scale. = TRUE)
-  pca_data <- as.data.frame(pca$x[, 1:2])  # Extract first two PCs
-  colnames(pca_data) <- c("PC1", "PC2")
-  pca_data$Sample <- rownames(pca_data)  # Add sample names as 'Sample' column
-  
-  # Ensure metadata matches PCA data
-  metadata_ordered <- metadata[match(pca_data$Sample, metadata$sample), ]
-  
-  # Add Batch and Class columns from metadata
-  pca_data$Batch <- metadata_ordered$batch
-  pca_data$Class <- metadata_ordered$class
-  
-  # Plot PCA
-  ggplot(pca_data, aes(x = PC1, y = PC2, color = Batch, shape = Class)) +
-    geom_point(size = 4) +
-    labs(title = title, x = "PC1", y = "PC2") +
-    theme_minimal()
-}
-
 # Main script
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) != 4) {
@@ -118,16 +93,3 @@ output_counts_file <- file.path(output_folder, "counts_corrected_combat_seq.tsv"
 corrected_counts_df <- data.frame(gene = rownames(corrected_counts), corrected_counts)
 write.table(corrected_counts_df, output_counts_file, sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 cat("Batch-corrected counts saved to '", output_counts_file, "'\n", sep = "")
-
-# Plot PCA before and after correction
-p1 <- plot_pca(log2(counts + 1), metadata, "PCA Before Batch Correction")
-p2 <- plot_pca(log2(corrected_counts + 1), metadata, "PCA After Batch Correction")
-
-# Save PCA plots
-output_pca_before <- file.path(output_folder, "pca_before.png")
-output_pca_after <- file.path(output_folder, "pca_after.png")
-
-ggsave(output_pca_before, p1, width = 8, height = 8)
-ggsave(output_pca_after, p2, width = 8, height = 8)
-
-cat("PCA plots saved to '", output_folder, "'\n", sep = "")

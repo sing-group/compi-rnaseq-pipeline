@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <runners xmlns="http://sing-group.org/compi/runners-1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <runner tasks="htseq-count, genome-index, alignment, samtools">
+    <runner tasks="htseq-count, genome-index, alignment, samtools, feature-counts, pca, pca-batch-correction">
         envs=$(for param in $task_params; do echo -n "-e $param "; done)
-        docker_image=${task_id/-/_}_image
+        docker_image=${task_id//-/_}_image
         docker run --rm $envs -v ${working_dir}:${working_dir} --entrypoint /bin/bash ${!docker_image} -c "${task_code}"
     </runner>
 </runners>

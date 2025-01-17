@@ -2,8 +2,8 @@
     "version": "2.0.0",
     "options": {
         "env": {
-            "data_directory": "/media/hlfernandez/Almacenamiento/Data/Collaborations/Rosalinda/data-compi-rnaseq-pipeline-1.0.0/",
-            "single_task": "initialization"
+            "data_directory": "/media/hlfernandez/Almacenamiento/Data/Collaborations/Rosalinda/data-rosalinda/",
+            "single_task": "prepare-deas"
         }
     },
     "tasks": [
