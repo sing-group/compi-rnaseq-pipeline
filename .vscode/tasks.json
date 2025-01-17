@@ -3,7 +3,9 @@
     "options": {
         "env": {
             "data_directory": "/media/hlfernandez/Almacenamiento/Data/Collaborations/Rosalinda/data-rosalinda/",
-            "single_task": "prepare-deas"
+            "single_task": "join-all",
+            "from_task": "join-all",
+            "until_task": "delite"
         }
     },
     "tasks": [
@@ -27,6 +29,12 @@
             "label": "run single task",
             "type": "shell",
             "command": "docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v ${data_directory}:${data_directory} -v /tmp:/tmp singgroup/compi-rnaseq -pa ${data_directory}/parameters -r runner.xml -st ${single_task} -o --logs ${data_directory}/compi/logs",
+            "dependsOn": "build",
+        },
+        {
+            "label": "run partially",
+            "type": "shell",
+            "command": "docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v ${data_directory}:${data_directory} -v /tmp:/tmp singgroup/compi-rnaseq -pa ${data_directory}/parameters -r runner.xml --from ${from_task} --until ${until_task} -o --logs ${data_directory}/compi/logs",
             "dependsOn": "build",
         }
     ]
