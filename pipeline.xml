@@ -91,7 +91,7 @@
 			if="[[ ${counts_method} == 'featurecounts' ]]"
 		>
 			awk 'BEGIN{OFS="\t"} NR>1 {print $1, $NF}' ${working_dir}/${samples_feature_counts_dir}/${sample_name}.txt > ${working_dir}/${samples_feature_counts_dir}/${sample_name}_unsorted.tsv
-			tail -n +2 ${working_dibatch-correction-all
+			tail -n +2 ${working_dir}/${samples_feature_counts_dir}/${sample_name}_unsorted.tsv | sort -k1,1 > ${working_dir}/${samples_feature_counts_dir}/${sample_name}.tsv
 		</foreach>
 		<task id="join-all" after="htseq-count, feature-counts-postprocessing" src="tasks/join_all.sh"></task>
 		<task id="pca" after="join-all"><![CDATA[
