@@ -37,6 +37,7 @@
 		<!-- Internal files and directories -->
 		<param name="samples_files_list" shortName="samples_files_list" defaultValue="compi/samples.txt" global="true">The file where the merged htseq-count results are stored.</param>
 		<param name="contrasts_file" shortName="contrasts_file" defaultValue="compi/contrasts.tsv" global="true">The path to the contrasts file provided by the user (relative to the working directory).</param>
+		<param name="mapping_file" shortName="mapping_file" defaultValue="compi/gene_mappings.tsv" global="true">The path to the gene mappings file (relative to the working directory).</param>
 		<param name="samples_alignment_dir" shortName="samples_alignment_dir" defaultValue="compi/aligned-reads" global="true">The directory where aligned samples reads should be placed.</param>
 		<param name="samples_htseqcount_dir" shortName="samples_htseqcount_dir" defaultValue="compi/htseq-count" global="true">The directory where htseq-count results should be placed.</param>
 		<param name="samples_feature_counts_dir" shortName="samples_feature_counts_dir" defaultValue="compi/feature-counts" global="true">The directory where feature-counts results should be placed.</param>
@@ -49,8 +50,13 @@
 		<task id="genome-index" after="initialization">
 			${hisat2_index} ${working_dir}/${genome_fasta} ${working_dir}/${genome_index_dir}/${genome_index}
 		</task>
+		<task
+			id="get-mappings"
+			after="initialization"
+			src="tasks/get_mappings.sh"
+		/>
 		<foreach 
-			id="alignment" after="genome-index" 
+			id="alignment" after="genome-index, get-mappings" 
 			of="command" 
 			in="${scripts_dir}/list_samples.sh ${working_dir}/${samples_dir}/${metadata_file} ${working_dir}/${samples_files_list}" 
 			as="sample_name"
