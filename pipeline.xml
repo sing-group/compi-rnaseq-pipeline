@@ -16,6 +16,7 @@
 		<param name="feature_counts_image" shortName="htfeature_counts_imageseq_count_image" defaultValue="pegi3s/feature-counts:2.0.0" global="true">The featureCounts Docker image</param>
 		<param name="delite_image" shortName="delite_image" defaultValue="bioinfolabcro/delite:v.1.2.2" global="true">The DElite Docker image</param>
 		<param name="sva_image" shortName="sva_image" defaultValue="pegi3s/r_sva:3.54.0" global="true">The R SVA Docker image</param>
+		<param name="annotationdbi_image" shortName="annotationdbi_image" defaultValue="pegi3s/r_annotationdbi:3.20.0" global="true">The R AnnotationDbi Docker image</param>
 		<param name="pca" shortName="pca" defaultValue="pca" global="true">The executable of the pca command.</param>
 		<param name="pca_image" shortName="pca_image" defaultValue="singgroup/sklearn_pca" global="true">The scikit-learn PCA Docker image</param>
 		<param name="pca_batch_correction_image" shortName="pca_batch_correction_image" defaultValue="singgroup/sklearn_pca" global="true">The scikit-learn PCA Docker image</param>
@@ -44,6 +45,7 @@
 		<param name="dea_dir" shortName="deas_dir" defaultValue="compi/dea" global="true">The directory where DEA results should be placed.</param>
 		<param name="all_counts_dir" shortName="all_counts_dir" defaultValue="compi/all_counts" global="true">The directory where PCA results should be placed.</param>
 		<param name="scripts_dir" shortName="sd" defaultValue="/scripts" global="true">Path of the directory containing the pipeline scripts.</param>
+		<param name="tasks_dir" shortName="td" defaultValue="/tasks" global="true">Path of the directory containing the pipeline tasks scripts.</param>
 	</params>
 	<tasks>
 		<task id="initialization" src="tasks/initialization.sh"></task>
@@ -128,6 +130,12 @@
 				condition=class \
 				reference_condition=${reference}
 		</foreach>
+		<foreach id="add-mappings" after="*delite"
+			of="command"
+			in="ls ${working_dir}/${dea_dir}"
+			as="contrast_dir"
+			src="tasks/add_mappings.sh"
+		/>
 	</tasks>
     <metadata>
         <task-description id="initialization">Initializes the directories for the pipeline outputs and pulls the Docker images.</task-description>
