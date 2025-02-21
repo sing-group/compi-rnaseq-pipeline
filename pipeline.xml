@@ -20,6 +20,7 @@
 		<param name="pca" shortName="pca" defaultValue="pca" global="true">The executable of the pca command.</param>
 		<param name="pca_image" shortName="pca_image" defaultValue="singgroup/sklearn_pca" global="true">The scikit-learn PCA Docker image</param>
 		<param name="pca_batch_correction_image" shortName="pca_batch_correction_image" defaultValue="singgroup/sklearn_pca" global="true">The scikit-learn PCA Docker image</param>
+		<param name="pathfindr_image" shortName="pathfindr_image" defaultValue="pegi3s/r_pathfindr:2.4.2" global="true">The R pathfindR Docker image</param>
 
 		<!-- User input files and directories -->
 		<param name="genome_fasta" shortName="genome_fasta" global="true">The reference genome.</param>
