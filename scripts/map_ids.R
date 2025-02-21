@@ -138,7 +138,7 @@ if (debug) {
 
 original_columns <- setdiff(colnames(tsv), "X")
 merged_tsv_3_clean <- merged_tsv_3[, c("gene_ensembl_id", "final_gene_name", "final_gene_entrezid", "gtf_gene_biotype", original_columns)]
-colnames(merged_tsv_3_clean)[1] <- "gtf_ensembl_id"
+colnames(merged_tsv_3_clean)[1] <- "gtf_gene_id"
 colnames(merged_tsv_3_clean)[2] <- "gene_name"
 colnames(merged_tsv_3_clean)[3] <- "gene_entrezid"
 colnames(merged_tsv_3_clean)[4] <- "gene_biotype"
