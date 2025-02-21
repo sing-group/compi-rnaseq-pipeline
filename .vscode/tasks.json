@@ -3,7 +3,7 @@
     "options": {
         "env": {
             "data_directory": "/media/hlfernandez/Almacenamiento/Data/Collaborations/Rosalinda/Pipeline_HTSeqv2.0.9/",
-            "single_task": "add-mappings",
+            "single_task": "pathfindr",
             "from_task": "join-all",
             "until_task": "delite"
         }
@@ -28,7 +28,7 @@
         {
             "label": "run single task",
             "type": "shell",
-            "command": "docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v ${data_directory}:${data_directory} -v /tmp:/tmp singgroup/compi-rnaseq -pa ${data_directory}/parameters -r runner.xml -st ${single_task} -o --logs ${data_directory}/compi/logs",
+            "command": "docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v ${data_directory}:${data_directory} -v /tmp:/tmp singgroup/compi-rnaseq -pa ${data_directory}/parameters -r runner.xml -st ${single_task} -o --logs ${data_directory}/compi/logs -n 5",
             "dependsOn": "build",
         },
         {
@@ -38,9 +38,15 @@
             "dependsOn": "build",
         },
         {
+<<<<<<< HEAD
             "label": "init working dir",
             "type": "shell",
             "command": "WORKING_DIRECTORY=/tmp/work_dir_tmp && mkdir -p ${WORKING_DIRECTORY} && docker run --rm -v ${WORKING_DIRECTORY}:${WORKING_DIRECTORY} -u "$(id -u)":"$(id -g)" --entrypoint=/bin/bash singgroup/compi-rnaseq init_working_dir.sh ${WORKING_DIRECTORY}",
+=======
+            "label": "update pathfindR script",
+            "type": "shell",
+            "command": "wget https://raw.githubusercontent.com/sing-group/run-pathfindR/refs/heads/master/run-pathfindR.R -O scripts/run-pathfindR.R",
+>>>>>>> Adds pathfindR
             "dependsOn": "build",
         }
     ]
