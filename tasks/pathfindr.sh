@@ -36,7 +36,7 @@ mkdir -p ${working_dir}/compi/cache/pathfindR
 
 docker run --rm -v ${working_dir}:${working_dir} -w ${working_dir} \
     -v ${working_dir}/compi/cache/pathfindR:/root/.cache/R/BiocFileCache \
-    --entrypoint=Rscript pegi3s/r_pathfindr_tmp_devel \
+    --entrypoint=Rscript ${pathfindr_image} \
         ${pathfindR_script} \
             ${dea_dir}/${dea}/${delite_dir}/${pathfindr_delite_file_prefix}_with_genes_clean.csv \
             ${dea_dir}/${dea}/counts.tsv \
