@@ -14,7 +14,7 @@
 		<param name="htseq_count_image" shortName="htseq_count_image" defaultValue="pegi3s/htseq:2.0.9" global="true">The HTSeq Docker image</param>
 		<param name="feature_counts" shortName="feature_counts" defaultValue="featureCounts" global="true">The executable of the featureCounts command.</param>
 		<param name="feature_counts_image" shortName="htfeature_counts_imageseq_count_image" defaultValue="pegi3s/feature-counts:2.0.0" global="true">The featureCounts Docker image</param>
-		<param name="delite_image" shortName="delite_image" defaultValue="bioinfolabcro/delite:v.1.2.2" global="true">The DElite Docker image</param>
+		<param name="delite_image" shortName="delite_image" defaultValue="bioinfolabcro/delite:v.1.2.3" global="true">The DElite Docker image</param>
 		<param name="sva_image" shortName="sva_image" defaultValue="pegi3s/r_sva:3.54.0" global="true">The R SVA Docker image</param>
 		<param name="annotationdbi_image" shortName="annotationdbi_image" defaultValue="pegi3s/r_annotationdbi:3.20.0" global="true">The R AnnotationDbi Docker image</param>
 		<param name="pca" shortName="pca" defaultValue="pca" global="true">The executable of the pca command.</param>
