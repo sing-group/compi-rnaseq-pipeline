@@ -1,0 +1,11 @@
+# Absolute path to the working dir
+working_dir=/path/to/working/dir
+
+# Paths to input files and directories relatives to the working dir
+genome_fasta=genome/Homo_sapiens.GRCh38.dna.primary_assembly.fa
+reference_annotation=genes/Homo_sapiens.GRCh38.113.chr.gtf
+
+# Optional configuration parameters for the anlyses
+# batch_correction=batch_column
+# counts_method=htseq
+# skip_pathfindR_existing

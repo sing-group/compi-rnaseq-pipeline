@@ -36,6 +36,12 @@
             "type": "shell",
             "command": "docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v ${data_directory}:${data_directory} -v /tmp:/tmp singgroup/compi-rnaseq -pa ${data_directory}/parameters -r runner.xml --from ${from_task} --until ${until_task} -o --logs ${data_directory}/compi/logs",
             "dependsOn": "build",
+        },
+        {
+            "label": "init working dir",
+            "type": "shell",
+            "command": "WORKING_DIRECTORY=/tmp/work_dir_tmp && mkdir -p ${WORKING_DIRECTORY} && docker run --rm -v ${WORKING_DIRECTORY}:${WORKING_DIRECTORY} -u "$(id -u)":"$(id -g)" --entrypoint=/bin/bash singgroup/compi-rnaseq init_working_dir.sh ${WORKING_DIRECTORY}",
+            "dependsOn": "build",
         }
     ]
 }

@@ -143,7 +143,14 @@
         <task-description id="alignment">Aligns each pair of FASTQ files using HISAT2.</task-description>
         <task-description id="samtools">Converts the HISAT2 alignments into BAM format using samtools.</task-description>
         <task-description id="htseq-count">Runs htseq-count to obtain the raw counts for subsequent analyses.</task-description>
+        <task-description id="feature-counts">Runs featureCounts to obtain the raw counts for subsequent analyses.</task-description>
+        <task-description id="feature-counts-postprocessing">Sorts the featureCounts output files.</task-description>
         <task-description id="prepare-deas">Creates one DEA folder for each specified contrast.</task-description>
         <task-description id="delite">Runs DElite in each DEA folder.</task-description>
+		<task-description id="join-all">Merges sample counts into a single file.</task-description>
+		<task-description id="pca">Performs PCA in the single counts file containing all samples.</task-description>
+		<task-description id="batch-correction-all">Performs batch correction using as input the single counts file.</task-description>
+		<task-description id="pca-batch-correction">Performs PCA on the batch-corrected single counts file.</task-description>
+		<task-description id="add-mappings">Adds gene names and Entrez Gene IDs to the DElite output files.</task-description>
     </metadata>
 </pipeline>
