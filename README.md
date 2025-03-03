@@ -1,4 +1,4 @@
-# compi-rnaseq-pipeline
+# compi-rnaseq-pipeline [![license](https://img.shields.io/badge/license-MIT-brightgreen)](https://github.com/sing-group/compi-rnaseq-pipeline) [![dockerhub](https://img.shields.io/badge/hub-docker-blue)](https://hub.docker.com/r/singgroup/compi-rnaseq) [![compihub](https://img.shields.io/badge/hub-compi-blue)](https://www.sing-group.org/compihub/explore/5d09fb2a1713f3002fde86e2)
 
 A Compi RNA-Seq pipeline to perform differential expression using DElite.
 
@@ -8,8 +8,8 @@ A Docker image is available for this pipeline in [this Docker Hub repository](ht
 
 To perform an analysis users must first:
 
-1. Initialize a working directory with the files required the pipeline.
-2. Add the data analysis (fastQ reads, genomes, configuration files, and so on).
+1. Initialize a working directory with the files required by the pipeline.
+2. Add the input data to be analyzed (fastQ reads, genomes, configuration files, and so on).
 3. Configure the pipeline parameters.
 
 This section provides a comprehensive guide on how to perform these steps and the tools and scripts included in the pipeline image to do it easily.
@@ -37,13 +37,13 @@ After completing any of the above options, the selected working directory should
 /path/to/the/working-directory
 ├── compi.parameters
 ├── config
-│   └── contrasts.tsv
+│   └── contrasts.tsv
 ├── genes
 ├── genome
 ├── README.txt
 ├── run.sh
 └── samples
-    └── metadat.tsv
+    └── metadata.tsv
 ```
 
 Where:
@@ -53,13 +53,13 @@ Where:
 - `samples` is the folder where the input FASTQ files must be placed. It must also contain a `metadata.tsv` file with the samples metadata (names and groups).
 - `genome` is the folder where the input genome must be placed.
 - `genes` is the folder where the input GTF annotation file must be placed.
-- `config` is the folder with input configuration files must be placed. It may contain an optional file called `contrasts.tsv` with the DEA contrasts that must be performed (if no provided, the pipeline generates all combinations based on the information in the `metadata.tsv` file).
+- `config` is the folder wher the input configuration files must be placed. It may contain an optional file called `contrasts.tsv` with the DEA contrasts that must be performed (if not provided, the pipeline generates all combinations based on the information in the `metadata.tsv` file).
 
 # Running the pipeline with sample data
 
-It is possible to test the pipeline using our sample data available [here](https://static.sing-group.org/data/data-compi-rnaseq-pipeline-2.0_chr_X.zip) or [here](https://static.sing-group.org/data/data-compi-rnaseq-pipeline-2.0_HCC1395.zip). 
+It is possible to test the pipeline using our sample data available [here](https://static.sing-group.org/data/compi-rnaseq-pipeline/data-compi-rnaseq-pipeline-2.0_chr_X.zip) or [here](https://static.sing-group.org/data/compi-rnaseq-pipeline/data-compi-rnaseq-pipeline-2.0_HCC1395.zip). 
 
-Download any of the ZIP files and decompress the in your local file system. Edit the `compi.parameters` file to update `working_dir` so that it points to to the path where you have the decompressed data.
+Download any of the ZIP files and decompress them in your local file system. Edit the `compi.parameters` file to update the `working_dir` parameter so that it points to to the path where you have the decompressed data.
 
 Then, to execute the pipeline using Docker, run the following command changing the `/path/to/rna-seq-docker/data/` to the path where you have the decompressed data.
 
