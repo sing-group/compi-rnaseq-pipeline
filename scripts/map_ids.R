@@ -1,25 +1,31 @@
 ## Script input parameters:
 ##  1.- DElite results: path to the CSV file with DEA results from DElite (1st column must be the gene_ensembl_id)
 ##  2.- Gene mappings: path to the TSV file with gene mappings (3 columns: gene_ensembl_id, gene_name, gene_biotype)
-##  3.- Debug: a logical value to print debug information and store the full annotations file for debugging purposes
+##  3.- Store multimapped: a logical value to indicate if multimapped genes should be written to files
+##  4.- Debug: a logical value to print debug information and store the full annotations file for debugging purposes
+
+print("Starting mapping script v0.2.0")
 
 library(org.Hs.eg.db)
 
 args <- commandArgs(TRUE)
 
-if (length(args) != 3) {
-    stop("Usage: Rscript mapping.R <DElite_results_file> <gene_mappings_file> <debug>")
+if (length(args) != 4) {
+    stop("Usage: Rscript mapping.R <DElite_results_file> <gene_mappings_file> <store_multimapped> <debug>")
 }
 
 delite_results <- args[1]
 gene_mappings <- args[2]
-debug <- as.logical(args[3])
+store_multimapped <- as.logical(args[3])
+debug <- as.logical(args[4])
 if (is.na(debug)) {
     print("Invalid debug mode, must be TRUE or FALSE")
 }
 
 delite_results_mod <- gsub(".csv", "_with_annotations_full.csv", delite_results)
 delite_results_mod_clean <- gsub(".csv", "_with_genes_clean.csv", delite_results)
+delite_multimapped_ensembl_ids <- gsub(".csv", "_multimapped_EnsemblIDs.csv", delite_results)
+delite_multimapped_gene_names <- gsub(".csv", "_multimapped_Gene_Names.csv", delite_results)
 
 print(paste('Processing DElite results: ', delite_results, sep=""))
 
@@ -68,17 +74,29 @@ multipleMapIds <- function(db, keys, keytype, multiVals, columns) {
 }
 
 #
-# 2. For those genes without a gene name, try to find it using the org.Hs.eg.db package
-# and map the gene_ensembl_id to SYMBOL (i.e. gene name) and ENTREZID (i.e. gene ID, for RCPA)
+# 2. Try mapping all initial gene_ensembl_id into SYMBOL (i.e. gene name) and 
+# ENTREZID (i.e. gene ID, for RCPA) using the org.Hs.eg.db package
 #
 
-unmapped_ensembl_ids = merged_tsv[is.na(merged_tsv[["gtf_gene_name"]]),]$gene_ensembl_id
+unmapped_ensembl_ids = merged_tsv$gene_ensembl_id
 if (length(unmapped_ensembl_ids) == 0) {
-    print("All genes have a gene name in the GTF mapping file")
-    merged_tsv_2 <- merged_tsv
-    merged_tsv_2$gene_entrez_id_1 <- NA
+    print("There are no genes to map in the input file")
+    quit("no", status = 0)
 } else {
-    print(paste("There are ", length(unmapped_ensembl_ids), " genes without a gene name, obtainig them trough AnnotationDbi", sep=""))
+    print(paste("There are ", length(unmapped_ensembl_ids), " initial genes to map, obtainig SYMBOL/ENTREZID trough AnnotationDbi", sep=""))
+
+    if (store_multimapped) {
+        # Identify multiple mappings using select
+        tryCatch({
+            ENSEMBLMapping <- AnnotationDbi::select(org.Hs.eg.db, keys = unmapped_ensembl_ids, columns = c("SYMBOL", "ENTREZID"), keytype = "ENSEMBL")
+            multimapped <- ENSEMBLMapping[ENSEMBLMapping$ENSEMBL %in% names(table(ENSEMBLMapping$ENSEMBL)[table(ENSEMBLMapping$ENSEMBL) > 1]), ]
+            if (nrow(multimapped) > 0) {
+                print(paste0("Some genes have multiple mappings, writing them to a file named", delite_multimapped_ensembl_ids))
+                write.table(multimapped, row.names = FALSE, file = delite_multimapped, sep = ",", quote = FALSE)
+            }
+        }, error = function(e) { })
+    }
+    
 
     mapping_df <- multipleMapIds(
         org.Hs.eg.db, 
@@ -87,24 +105,36 @@ if (length(unmapped_ensembl_ids) == 0) {
         "first", 
         c("ENTREZID", "SYMBOL")
     )
-    colnames(mapping_df) <- c("gene_ensembl_id", "gene_entrez_id_1", "gene_name")
+    colnames(mapping_df) <- c("gene_ensembl_id", "gene_entrez_id_1", "gene_name_1")
 
     merged_tsv_2 <- merge(merged_tsv, mapping_df, by.x = "gene_ensembl_id", by.y = "gene_ensembl_id", all.x = TRUE)
 }
 
 #
-# 3. For those genes that do not have gene_entrez_id_1 but have gtf_gene_name, use this column (gtf_gene_name) 
+# 3. For those genes that do not have gene_name_1 but have gtf_gene_name, use this column (gtf_gene_name) 
 # to try to find the ENTREZID using AnnotationDbi::mapIds
 #
 
-missing_entrezid <- merged_tsv_2[is.na(merged_tsv_2$gene_entrez_id_1) & !is.na(merged_tsv_2$gtf_gene_name), ]$gtf_gene_name
+missing_entrezid <- merged_tsv_2[is.na(merged_tsv_2$gene_name_1) & !is.na(merged_tsv_2$gtf_gene_name), ]$gtf_gene_name
 
 if (length(missing_entrezid) == 0) {
-    print("All genes have been mapped into a gene entrez id")
+    print("All genes have been mapped into a gene name")
     merged_tsv_3 <- merged_tsv_2
     merged_tsv_3$gene_entrez_id_2 <- NA
 } else {
-    print(paste("There are ", length(missing_entrezid), " genes without a gene entrez id, obtainig them trough AnnotationDbi", sep=""))
+    print(paste("There are ", length(missing_entrezid), " genes without a gene name, obtainig them trough AnnotationDbi", sep=""))
+
+    if (store_multimapped) {
+        # Identify multiple mappings using select
+        tryCatch({
+        ENSEMBLMapping <- AnnotationDbi::select(org.Hs.eg.db, keys = missing_entrezid, columns = c("ENTREZID"), keytype = "SYMBOL")
+        multimapped_names <- ENSEMBLMapping[ENSEMBLMapping$SYMBOL %in% names(table(ENSEMBLMapping$SYMBOL)[table(ENSEMBLMapping$SYMBOL) > 1]), ]
+        if (nrow(multimapped_names) > 0) {
+            print(paste0("Some gene names have multiple mappings, writing them to a file named", multimapped_names))
+            write.table(multimapped_names, row.names = FALSE, file = delite_multimapped_gene_names, sep = ",", quote = FALSE)
+        }
+        }, error = function(e) { })
+    }
 
     mapping_df_2 <- multipleMapIds(
         org.Hs.eg.db, 
@@ -120,10 +150,10 @@ if (length(missing_entrezid) == 0) {
 
 #
 # 4. Now we will create two new columns: final_gene_name and final_gene_entrezid
-# final_gene_name is the result of the following logic: put gtf_gene_name if it is not NA, otherwise put gene_name
+# final_gene_name is the result of the following logic: put gene_name if it is not NA, otherwise put gtf_gene_name
 # final_gene_entrezid is the result of the following logic: put gene_entrez_id_1 if it is not NA, otherwise put gene_entrez_id_2
 #
-merged_tsv_3$final_gene_name <- ifelse(is.na(merged_tsv_3$gtf_gene_name), merged_tsv_3$gene_name, merged_tsv_3$gtf_gene_name)
+merged_tsv_3$final_gene_name <- ifelse(is.na(merged_tsv_3$gene_name), merged_tsv_3$gtf_gene_name, merged_tsv_3$gene_name)
 merged_tsv_3$final_gene_entrezid <- ifelse(is.na(merged_tsv_3$gene_entrez_id_1), merged_tsv_3$gene_entrez_id_2, merged_tsv_3$gene_entrez_id_1)
 
 if (debug) {
@@ -138,7 +168,7 @@ if (debug) {
 
 original_columns <- setdiff(colnames(tsv), "X")
 merged_tsv_3_clean <- merged_tsv_3[, c("gene_ensembl_id", "final_gene_name", "final_gene_entrezid", "gtf_gene_biotype", original_columns)]
-colnames(merged_tsv_3_clean)[1] <- "gtf_gene_id"
+colnames(merged_tsv_3_clean)[1] <- "gtf_ensembl_id"
 colnames(merged_tsv_3_clean)[2] <- "gene_name"
 colnames(merged_tsv_3_clean)[3] <- "gene_entrezid"
 colnames(merged_tsv_3_clean)[4] <- "gene_biotype"

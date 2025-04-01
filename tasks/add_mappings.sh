@@ -20,6 +20,7 @@ for DElite_folder in $(find ${working_dir}/${dea_dir}/${contrast_dir} -iname "DE
             Rscript ${MAP_IDS_SCRIPT} \
             ${file} \
             ${working_dir}/${mapping_file} \
-            FALSE
+            FALSE \
+            FALSE  
     done
 done

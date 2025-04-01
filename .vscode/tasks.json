@@ -2,8 +2,8 @@
     "version": "2.0.0",
     "options": {
         "env": {
-            "data_directory": "/media/hlfernandez/Almacenamiento/Data/Collaborations/Rosalinda/data-rosalinda/",
-            "single_task": "join-all",
+            "data_directory": "/media/hlfernandez/Almacenamiento/Data/Collaborations/Rosalinda/Pipeline_HTSeqv2.0.9/",
+            "single_task": "add-mappings",
             "from_task": "join-all",
             "until_task": "delite"
         }
@@ -12,7 +12,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "compi-dk build -tv"
+            "command": "compi-dk build -tv -drd"
         },
         {
             "label": "run",
