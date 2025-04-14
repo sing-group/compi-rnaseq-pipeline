@@ -37,7 +37,8 @@ After completing any of the above options, the selected working directory should
 /path/to/the/working-directory
 ├── compi.parameters
 ├── config
-│   └── contrasts.tsv
+│   ├── contrasts.tsv
+│   └── pathfindR.tsv
 ├── genes
 ├── genome
 ├── README.txt
@@ -53,7 +54,9 @@ Where:
 - `samples` is the folder where the input FASTQ files must be placed. It must also contain a `metadata.tsv` file with the samples metadata (names and groups).
 - `genome` is the folder where the input genome must be placed.
 - `genes` is the folder where the input GTF annotation file must be placed.
-- `config` is the folder wher the input configuration files must be placed. It may contain an optional file called `contrasts.tsv` with the DEA contrasts that must be performed (if not provided, the pipeline generates all combinations based on the information in the `metadata.tsv` file).
+- `config` is the folder wher the input configuration files must be placed. It may contain:
+  - An optional file called `contrasts.tsv` with the DEA contrasts that must be performed (if not provided, the pipeline generates all combinations based on the information in the `metadata.tsv` file). 
+  - A fille called `pathfindR.tsv` indicating the genesets for enrichment (KEGG, Reactome, BioCarta, GO-All, GO-BP, GO-CC, or GO-MF; all for Homo sapiens) and the protein-protein interaction network (Biogrid, STRING, GeneMania, IntAct, KEGG, or mmu_STRING) for the pathfindR analysis. It is a two-column CSV file where the first column is the geneset and the second is the protein-protein interaction network. Lines starting with `#` are skipped and one pathfindR analysis for each line will be executed.
 
 # Running the pipeline with sample data
 

@@ -1,6 +1,6 @@
-NEXT STEPS BEFORE RUNNING MYBRAIN-SEQ
+NEXT STEPS BEFORE RUNNING THE PIPELINE
 
-Please, complete the next steps before running myBrain-Seq analysis:
+Please, complete the next steps before running the analysis:
 
 ------------------------------------------------------------------------------
 
@@ -35,7 +35,14 @@ Please, complete the next steps before running myBrain-Seq analysis:
 
 ==============================================================================
 
-        4. Run the analysis interactively by using the "run.sh" script 
+        4. Fill the "pathfindR.csv" file in "config/" directory, e.g.:
+
+            KEGG,Biogrid
+            KEGG,STRING
+
+==============================================================================
+
+        5. Run the analysis interactively by using the "run.sh" script 
             placed on the working-dir:
 
            - To start the analysis using the script adapt the following code:
