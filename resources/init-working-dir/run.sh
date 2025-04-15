@@ -28,7 +28,7 @@ fi
 # get the paths from the compi.parameters file
 workingDir="$(get_compi_parameter ${FULL_COMPI_PARAMS_FILE} "working_dir")"
 
-timestamp=$(date +"%Y-%m-%d_%H:%M:%S")
+timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
 mkdir -p ${workingDir}/compi/logs/${timestamp}
 
 docker run -it --rm \
