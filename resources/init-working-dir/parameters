@@ -6,6 +6,12 @@ genome_fasta=genome/Homo_sapiens.GRCh38.dna.primary_assembly.fa
 reference_annotation=genes/Homo_sapiens.GRCh38.113.chr.gtf
 
 # Optional configuration parameters for the analyses
-# batch_correction=batch_column
-# counts_method=htseq
-# skip_pathfindR_existing
+#batch_correction=batch_column
+#counts_method=htseq
+
+#skip_pathfindR_existing
+
+#rcpa_database=KEGG
+#rcpa_geneset_analysis_methods=fgsea,gsa,ora,ks,wilcox
+#rcpa_pathway_analysis_methods=spia,cepaORA,cepaGSA
+#skip_rcpa_existing
