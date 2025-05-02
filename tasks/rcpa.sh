@@ -34,7 +34,7 @@ fi
 
 rcpa_file=${results_dir}/rcpa.txt
 touch ${rcpa_file}
-echo "database=${rcpa_database}" >> ${rcpa_file}
+echo "database=${rcpa_database}" > ${rcpa_file}
 echo "geneset_analysis_methods=${rcpa_geneset_analysis_methods}" >> ${rcpa_file}
 echo "pathway_analysis_methods=${rcpa_pathway_analysis_methods}" >> ${rcpa_file}
 
