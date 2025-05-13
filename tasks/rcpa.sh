@@ -50,6 +50,9 @@ echo "delite_dea_results=${working_dir}/${dea_dir}/${dea}/${delite_dir}/${rcpa_d
 reference=$(cat ${working_dir}/${dea_dir}/${contrast_dir}/reference.txt)
 echo "reference=${reference}" >> ${rcpa_file}
 
+echo -e "\n# From ${user_rcpa_file}" >> ${rcpa_file}
+cat ${working_dir}/${user_rcpa_file} >> ${rcpa_file}
+
 docker run --rm -v ${working_dir}:${working_dir} -w ${working_dir} \
     --entrypoint=Rscript ${rcpa_image} \
         ${rcpa_script} ${rcpa_file}

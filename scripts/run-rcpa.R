@@ -1,9 +1,12 @@
 unloadNamespace("RCPA")
-library(RCPA)
-library(SummarizedExperiment)
-library(ggplot2)
-library(gridExtra)
-library(org.Hs.eg.db)
+
+suppressPackageStartupMessages({
+  library(RCPA)
+  library(SummarizedExperiment)
+  library(ggplot2)
+  library(gridExtra)
+  library(org.Hs.eg.db)
+})
 
 # Function to read properties file into a named list
 read_properties <- function(file_path) {
@@ -177,75 +180,111 @@ if (properties_map$database == "KEGG" ) {
 
 DEResult <- load_delite_dea_results(properties_map)
 
+# Function to get method-specific arguments
+getMethodArgs <- function(method, properties_map, defaults) {
+  args <- defaults[[method]]
+  if (is.null(args)) {
+    args <- list()
+  }
+  
+  # Extract method-specific properties from properties_map
+  method_prefix <- paste0(method, ".")
+  method_keys <- grep(paste0("^", method_prefix), names(properties_map), value = TRUE)
+  
+  for (key in method_keys) {
+    param_name <- sub(method_prefix, "", key)
+    value <- properties_map[[key]]
+    
+    # Attempt to convert to numeric or logical if possible
+    if (!is.na(as.numeric(value))) {
+      value <- as.numeric(value)
+    } else if (tolower(value) %in% c("true", "false")) {
+      value <- as.logical(tolower(value) == "true")
+    }
+    
+    args[[param_name]] <- value
+  }
+  
+  return(args)
+}
+
 if(length(properties_map$geneset_analysis_methods) > 1 || !is.na(properties_map$geneset_analysis_methods)) {
   print("[run-rcpa.R] Running gene set enrichment analyses")
+  
+  # Define default arguments for gene set analysis methods
+  geneset_defaults <- list(
+    fgsea = list(minSize = 10, maxSize = Inf),
+    ora = list(pThreshold = 0.05),
+    gsa = list(method = "maxmean", minsize = 15, maxsize = 500, nperms = 1000)
+  )
+  
   for (method in properties_map$geneset_analysis_methods) {
-      tryCatch({
-        print(paste0("[run-rcpa.R] Processing: ", method))
-          result <- switch(method,
-          "fgsea" = {
-            fgseaArgsList <- list(minSize = 10, maxSize = Inf)
-            runGeneSetAnalysis(DEResult, genesets, method = "fgsea", FgseaArgs = fgseaArgsList)
-          },
-          "ora" = {
-            runGeneSetAnalysis(DEResult, genesets, method = "ora", ORAArgs = list(pThreshold = 0.05))
-          },
-          "ks" = runGeneSetAnalysis(DEResult, genesets, method = "ks"),
-          "wilcox" = runGeneSetAnalysis(DEResult, genesets, method = "wilcox"),
-          "gsa" = {
-            GSAArgsList <- list(method = "maxmean", minsize = 15, maxsize = 500, nperms = 1000)
-            runGeneSetAnalysis(DEResult, genesets, method = "gsa", GSAArgs = GSAArgsList)
-          },
-          {
-            print(paste0("[run-rcpa.R] Unknown or unsupported method: ", method))
-            NULL
-          }
-        )
-
-        if (!is.null(result)) {
-          process_enrichment_analysis_result(result, paste0(properties_map$results_dir, "/geneset_enrichment"), method, genesets)
+    tryCatch({
+      print(paste0("[run-rcpa.R] Processing: ", method))
+      args <- getMethodArgs(method, properties_map, geneset_defaults)
+      print(paste0("[run-rcpa.R] Arguments: ", paste(names(args), args, sep = "=", collapse = ", ")))
+      result <- switch(method,
+        "fgsea" = runGeneSetAnalysis(DEResult, genesets, method = "fgsea", FgseaArgs = args),
+        "ora" = runGeneSetAnalysis(DEResult, genesets, method = "ora", ORAArgs = args),
+        "ks" = runGeneSetAnalysis(DEResult, genesets, method = "ks"),
+        "wilcox" = runGeneSetAnalysis(DEResult, genesets, method = "wilcox"),
+        "gsa" = runGeneSetAnalysis(DEResult, genesets, method = "gsa", GSAArgs = args),
+        {
+          print(paste0("[run-rcpa.R] Unknown or unsupported method: ", method))
+          NULL
         }
-      },
-      error = function(e) { message("[run-rcpa.R] Error in ", method, " analysis: ", e$message) }
+      )
+      
+      if (!is.null(result)) {
+        process_enrichment_analysis_result(result, paste0(properties_map$results_dir, "/geneset_enrichment"), method, genesets)
+      }
+    },
+    error = function(e) { message("[run-rcpa.R] Error in ", method, " analysis: ", e$message) }
     )
   }
 }
 
 if(length(properties_map$pathway_analysis_methods) > 1 || !is.na(properties_map$pathway_analysis_methods)) {
   print("[run-rcpa.R] Running topology-based enrichment analyses")
+  
+  # Define default arguments for pathway analysis methods
+  pathway_defaults <- list(
+    spia = list(nB = 1000, pThreshold = 0.05),
+    cepaORA = list(cen = "equal.weight", pThreshold = 0.05),
+    cepaGSA = list(cen = "equal.weight", nlevel = "tvalue_abs", plevel = "mean")
+  )
+  
   for (method in properties_map$pathway_analysis_methods) {
-      tryCatch({
-        print(paste0("[run-rcpa.R] Processing: ", method))
-          result <- switch(method,
-          "spia" = {
-            SPIANetwork <- RCPA::getSPIAKEGGNetwork(org = "hsa", updateCache = FALSE)
-            SPIAArgsList <- list(nB = 1000, pThreshold = 0.05)
-            set.seed(1)
-            runPathwayAnalysis(summarizedExperiment = DEResult, network = SPIANetwork, method = "spia", SPIAArgs = SPIAArgsList)
-          },
-          "cepaORA" = {
-            CePaNetwork <- RCPA::getCePaPathwayCatalogue(org = "hsa", updateCache = FALSE)
-            CePaORAArgsList<- list(cen = "equal.weight", pThreshold = 0.05)
-            set.seed(1)
-            runPathwayAnalysis(DEResult, network = CePaNetwork, method = "cepaORA", CePaORAArgs = CePaORAArgsList)
-          },
-          "cepaGSA" = {
-            CePaNetwork <- RCPA::getCePaPathwayCatalogue(org = "hsa", updateCache = FALSE)
-            CePaORAArgsList<- list(cen = "equal.weight", pThreshold = 0.05)
-            set.seed(1)
-            runPathwayAnalysis(DEResult, network = CePaNetwork, method = "cepaGSA", CePaORAArgs = CePaORAArgsList)
-          },
-          {
-            print(paste0("[run-rcpa.R] Unknown or unsupported method: ", method))
-            NULL
-          }
-        )
-
-        if (!is.null(result)) {
-          process_enrichment_analysis_result(result, paste0(properties_map$results_dir, "/topology_based_enrichment"), method, genesets)
+    tryCatch({
+      print(paste0("[run-rcpa.R] Processing: ", method))
+      args <- getMethodArgs(method, properties_map, pathway_defaults)
+      result <- switch(method,
+        "spia" = {
+          SPIANetwork <- RCPA::getSPIAKEGGNetwork(org = "hsa", updateCache = FALSE)
+          set.seed(1)
+          runPathwayAnalysis(summarizedExperiment = DEResult, network = SPIANetwork, method = "spia", SPIAArgs = args)
+        },
+        "cepaORA" = {
+          CePaNetwork <- RCPA::getCePaPathwayCatalogue(org = "hsa", updateCache = FALSE)
+          set.seed(1)
+          runPathwayAnalysis(DEResult, network = CePaNetwork, method = "cepaORA", CePaORAArgs = args)
+        },
+        "cepaGSA" = {
+          CePaNetwork <- RCPA::getCePaPathwayCatalogue(org = "hsa", updateCache = FALSE)
+          set.seed(1)
+          runPathwayAnalysis(DEResult, network = CePaNetwork, method = "cepaGSA", CePaGSAArgs = args)
+        },
+        {
+          print(paste0("[run-rcpa.R] Unknown or unsupported method: ", method))
+          NULL
         }
-      },
-      error = function(e) { message("[run-rcpa.R] Error in ", method, " analysis: ", e$message) }
+      )
+      
+      if (!is.null(result)) {
+        process_enrichment_analysis_result(result, paste0(properties_map$results_dir, "/topology_based_enrichment"), method, genesets)
+      }
+    },
+    error = function(e) { message("[run-rcpa.R] Error in ", method, " analysis: ", e$message) }
     )
   }
 }
