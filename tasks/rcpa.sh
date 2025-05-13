@@ -13,7 +13,12 @@ rcpa_script=${working_dir}/compi/scripts/run-rcpa.R
 # lock Rscript before copying to avoid errors when parallel tasks are running
 cp_and_lock ${scripts_dir}/run-rcpa.R ${task_id} ${rcpa_script}
 
-delite_dir=$(ls -1 ${working_dir}/${dea_dir}/${dea} | grep DElite* | head -1)
+if [[ "${pathway_delite_folder}" == "auto" ]]; then
+    echo "Using auto mode to find the most recent DElite directory"
+    delite_dir=$(ls -1t ${working_dir}/${dea_dir}/${dea} | grep DElite* | head -1)
+else
+    delite_dir=${pathway_delite_folder}
+fi
 
 if [ -z ${delite_dir} ]; then
     echo "No DElite directory found for DEA: ${working_dir}/${dea_dir}/${dea}"

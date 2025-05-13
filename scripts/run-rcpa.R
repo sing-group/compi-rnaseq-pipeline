@@ -51,6 +51,14 @@ check_required_keys <- function(properties_map, required_keys) {
 
 load_delite_dea_results <- function(properties_map) {
   res <- read.table(properties_map$delite_dea_results, header = TRUE, sep = ",", quote = "\"")
+  meta_df <- read.delim(properties_map$metadata_file, stringsAsFactors = TRUE)
+  num_samples <- nrow(meta_df)
+
+  # Remove rows with NA in pvalue column
+  res <- res[!is.na(res$pvalue),]
+
+  # Remove rows with duplicated gene_entrezid
+  res <- res[!duplicated(res$gene_entrezid),]
 
   DERes <- data.frame(
       ID = as.character(res$gene_entrezid),
@@ -60,7 +68,7 @@ load_delite_dea_results <- function(properties_map) {
       statistic = as.numeric(res$logFC), ### Or replace with other statistics used to rank the genes in the enrichment analysis
       logFCSE = 1,   ### just for placeholder, not using this column in runGeneSetAnalysis or runPathwayAnalysis
       avgExpr = 1,   ### just for placeholder, not using this column in runGeneSetAnalysis or runPathwayAnalysis
-      sampleSize = 1,
+      sampleSize = num_samples,
       stringsAsFactors = F
   ) %>% drop_na()
 
@@ -70,10 +78,9 @@ load_delite_dea_results <- function(properties_map) {
   ### Create a SummarizedExperiment object
   DEResult <- SummarizedExperiment::SummarizedExperiment(
       rowData = DERes,
-      assays = list(counts = matrix(0, nrow = nrow(DERes), ncol = 1)) ## placeholder for assay data, not using this in runGeneSetAnalysis or runPathwayAnalysis
+      assays = list(counts = matrix(0, nrow = nrow(DERes), ncol = num_samples)) ## placeholder for assay data, not using this in runGeneSetAnalysis or runPathwayAnalysis
   )
 
-  meta_df <- read.delim(properties_map$metadata_file, stringsAsFactors = TRUE)
   comparison <- setdiff(unique(meta_df$class), properties_map$reference)
   meta_df$class <- factor(meta_df$class, levels = c(comparison, properties_map$reference))
 
