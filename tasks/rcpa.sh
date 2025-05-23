@@ -51,7 +51,10 @@ reference=$(cat ${working_dir}/${dea_dir}/${contrast_dir}/reference.txt)
 echo "reference=${reference}" >> ${rcpa_file}
 
 echo -e "\n# From ${user_rcpa_file}" >> ${rcpa_file}
-cat ${working_dir}/${user_rcpa_file} >> ${rcpa_file}
+if [[ -f "${working_dir}/${user_rcpa_file}" ]]; then
+    cat ${working_dir}/${user_rcpa_file} >> ${rcpa_file}
+    exit 1
+fi
 
 docker run --rm -v ${working_dir}:${working_dir} -w ${working_dir} \
     --entrypoint=Rscript ${rcpa_image} \
