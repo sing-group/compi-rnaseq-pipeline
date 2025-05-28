@@ -25,7 +25,7 @@
 		<param name="fastqc" shortName="fastqc" defaultValue="fastqc" global="true">The executable of the fastqc command.</param>
 		<param name="fastqc_image" shortName="fastqc_image" defaultValue="pegi3s/fastqc:0.11.9" global="true">The fastqc Docker image to use.</param>
 		<param name="qualimap" shortName="qualimap" defaultValue="qualimap" global="true">The executable of the qualimap command.</param>
-		<param name="qualimap_image" shortName="qualimap_image" defaultValue="pegi3s/qualimap:2.2.1 " global="true">The qualimap Docker image to use.</param>
+		<param name="qualimap_image" shortName="qualimap_image" defaultValue="pegi3s/qualimap:2.2.1" global="true">The qualimap Docker image to use.</param>
 
 		<!-- User input files and directories -->
 		<param name="genome_fasta" shortName="genome_fasta" global="true">The reference genome.</param>
