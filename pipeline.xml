@@ -112,7 +112,7 @@
 			as="sample_name"
 		>
 			mkdir -p ${working_dir}/${qualimap_dir}/${sample_name}
-			${qualimap} rnaseq -pe -bam ${working_dir}/${samples_alignment_dir}/${sample_name}.sam -gtf ${working_dir}/${reference_annotation} -outdir ${working_dir}/${qualimap_dir}/${sample_name} -outformat PDF:HTML
+			${qualimap} rnaseq -pe -bam ${working_dir}/${samples_alignment_dir}/${sample_name}.bam -gtf ${working_dir}/${reference_annotation} -outdir ${working_dir}/${qualimap_dir}/${sample_name} -outformat PDF:HTML
 		</foreach>
 		<foreach 
 			id="htseq-count" after="*samtools"
