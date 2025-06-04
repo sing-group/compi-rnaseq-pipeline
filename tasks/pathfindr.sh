@@ -30,9 +30,10 @@ elif [ ! -f ${working_dir}/${dea_dir}/${dea}/${delite_dir}/${pathfindr_delite_fi
     exit 1
 fi
 
-results_dir=${dea_dir}/${dea}/pathfindR/${gene_set}_${pin}
+results_dir=${working_dir}/${dea_dir}/${dea}/${delite_dir}/pathfindR
+
 skip_pathfindR_existing=${skip_pathfindR_existing:-no}
-if [ ${skip_pathfindR_existing} == "yes" ] && [ -d ${working_dir}/${results_dir} ]; then
+if [ ${skip_pathfindR_existing} == "yes" ] && [ -d ${results_dir} ]; then
     echo "Skipping pathfindR for DEA: ${dea} and gene set: ${gene_set} as results already exist and flag skip_pathfindR_existing is set to yes"
     exit 0
 fi

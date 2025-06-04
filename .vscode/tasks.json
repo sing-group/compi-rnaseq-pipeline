@@ -2,13 +2,18 @@
     "version": "2.0.0",
     "options": {
         "env": {
-            "data_directory": "/media/hlfernandez/Almacenamiento/Data/Collaborations/Rosalinda/Pipeline_HTSeqv2.0.9/",
-            "single_task": "pathfindr",
+            "data_directory": "/media/hlfernandez/Almacenamiento/Data/Collaborations/Rosalinda/data-compi-rnaseq-pipeline-1.0.0/",
+            "single_task": "trimmomatic",
             "from_task": "join-all",
             "until_task": "delite"
         }
     },
     "tasks": [
+        {
+            "label": "export graph",
+            "type": "shell",
+            "command": "compi export-graph -o pipeline.png "
+        },
         {
             "label": "build",
             "type": "shell",

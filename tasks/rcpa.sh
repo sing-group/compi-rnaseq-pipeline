@@ -28,7 +28,8 @@ elif [ ! -f ${working_dir}/${dea_dir}/${dea}/${delite_dir}/${rcpa_delite_file_pr
     exit 1
 fi
 
-results_dir=${working_dir}/${dea_dir}/${dea}/rcpa
+results_dir=${working_dir}/${dea_dir}/${dea}/${delite_dir}/rcpa
+
 skip_rcpa_existing=${skip_rcpa_existing:-no}
 if [ ${skip_rcpa_existing} == "yes" ] && [ -d ${results_dir} ]; then
     echo "Skipping RCPA for DEA '${dea}' as results already exist and flag skip_rcpa_existing is set to yes"
