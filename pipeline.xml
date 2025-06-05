@@ -281,6 +281,9 @@
         <task-description id="initialization">Initializes the directories for the pipeline outputs and pulls the Docker images.</task-description>
         <task-description id="genome-index">Creates the genome index for the reference genome.</task-description>
         <task-description id="fastqc">Runs fastQC on each pair of input FASTQ files.</task-description>
+		<task-description id="trimmomatic">Runs Trimmomatic with the specified configuration on the input FASTQ files.</task-description>
+		<task-description id="trimmomatic-fastqc">Runs fastQC on each pair of trimmed input FASTQ files.</task-description>
+		<task-description id="trimmomatic-move">Moves trimmed FASTQ files into a folder so that they are used for alignment.</task-description>
         <task-description id="alignment">Aligns each pair of FASTQ files using HISAT2.</task-description>
         <task-description id="samtools">Converts the HISAT2 alignments into BAM format using samtools.</task-description>
         <task-description id="qualimap">Runs Qualimap on each BAM alignment file produced by samtools.</task-description>
