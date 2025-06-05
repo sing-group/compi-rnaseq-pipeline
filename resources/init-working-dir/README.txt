@@ -48,10 +48,11 @@ Please, complete the next steps before running the analysis:
            - To start the analysis using the script adapt the following code:
                         ./run.sh /absolute/path/to/compi.parameters
 
-        NOTE: to perform partial executions or change the number of parallel
-        processes of the analysis, please consult the documentation.
+        NOTE: to perform partial executions, change the number of parallel
+        processes of the analysis, or configure other pipeline settings, please
+        consult the documentation.
 
 ------------------------------------------------------------------------------
 
-For more information about these steps, please refeer to the online documentation
+For more information about these steps, please refer to the online documentation
 at: https://github.com/sing-group/compi-rnaseq-pipeline

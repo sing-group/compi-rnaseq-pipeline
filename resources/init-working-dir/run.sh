@@ -10,13 +10,13 @@ function get_compi_parameter {
     cat "${1}" | grep "${2}=" | cut -d'=' -f2
 }
 
-COMPI_RNA_SEQ_VERSION=${COMPI_RNA_SEQ_VERSION-2.0.0-SNAPSHOT}
+COMPI_RNA_SEQ_VERSION=${COMPI_RNA_SEQ_VERSION-latest}
 
 FULL_COMPI_PARAMS_FILE=$1
 ADDITIONAL_COMPI_PARAMS="${2:--num-tasks 5}"
 
 if [ $# -ne 1 ] && [ $# -ne 2 ]; then
-	show_error "[ERROR]: This script requires one argument (the path to the Compi parameters file)"
+	show_error "[ERROR]: This script requires at least one argument (the path to the Compi parameters file) and at most two arguments (additional Compi CLI parameters)"
 	exit 1
 fi
 
@@ -28,7 +28,7 @@ fi
 # get the paths from the compi.parameters file
 workingDir="$(get_compi_parameter ${FULL_COMPI_PARAMS_FILE} "working_dir")"
 
-timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
+timestamp=$(date +"%Y-%m-%d_%H:%M:%S")
 mkdir -p ${workingDir}/compi/logs/${timestamp}
 
 docker run -it --rm \

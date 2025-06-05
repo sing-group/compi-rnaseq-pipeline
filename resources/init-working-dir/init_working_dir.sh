@@ -34,9 +34,17 @@ then
 fi
 
 mkdir -p ${samples} ${genes} ${genome} ${config}
+
 touch "${samples}"/metadata.tsv
-cp "/resources/init-working-dir/contrasts.tsv" "${config}"
+
 cp "/resources/init-working-dir/parameters" "${wd}/compi.parameters"
+
 cp "/resources/init-working-dir/run.sh" "${wd}"
+cp "/resources/init-working-dir/run-trimmomatic-1.sh" "${wd}"
+cp "/resources/init-working-dir/run-trimmomatic-2.sh" "${wd}"
 cp "/resources/init-working-dir/README.txt" "${wd}"
-cp "/resources/init-working-dir/pathfindR.csv" "${wd}/config"
+cp "/resources/init-working-dir/pipeline.png" "${wd}"
+
+cp "/resources/init-working-dir/contrasts.tsv" "${config}"
+cp "/resources/init-working-dir/pathfindR.csv" "${config}"
+cp "/resources/init-working-dir/rcpa.txt" "${config}"
