@@ -1,19 +1,20 @@
-# compi-rnaseq-pipeline [![license](https://img.shields.io/badge/license-MIT-brightgreen)](https://github.com/sing-group/compi-rnaseq-pipeline) [![dockerhub](https://img.shields.io/badge/hub-docker-blue)](https://hub.docker.com/r/singgroup/compi-rnaseq) [![compihub](https://img.shields.io/badge/hub-compi-blue)](https://www.sing-group.org/compihub/explore/5d09fb2a1713f3002fde86e2)
+# compi-rnaseq-pipeline [![license](https://img.shields.io/badge/license-MIT-brightgreen)](https://github.com/sing-group/compi-rnaseq-pipeline) [![license](https://img.shields.io/badge/version-2.2.0-brightgreen)](https://github.com/sing-group/compi-rnaseq-pipeline) [![dockerhub](https://img.shields.io/badge/hub-docker-blue)](https://hub.docker.com/r/singgroup/compi-rnaseq) [![compihub](https://img.shields.io/badge/hub-compi-blue)](https://www.sing-group.org/compihub/explore/5d09fb2a1713f3002fde86e2)
 
 A Compi RNA-Seq pipeline to perform differential expression using DElite and enrichment analysis using RCPA and pathfindR.
 
 A Docker image is available for this pipeline in [this Docker Hub repository](https://hub.docker.com/r/singgroup/compi-rnaseq). To run the pipeline locally, see the [required dependencies](DEPENDENCIES.md).
 
 ## Table of contents
+
 - [Using the Compi RNA-Seq pipeline image in Linux](#using-the-compi-rna-seq-pipeline-image-in-linux)
     - [Initialize the working directory](#initialize-the-working-directory)
 - [Running the pipeline with sample data](#running-the-pipeline-with-sample-data)
     - [Additional Compi execution parameters](#additional-compi-execution-parameters)
-        - [Run a single task with 2 maximum parallel executions](#run-a-single-task-with-2-maximum-parallel-executions)
-        - [Partial execution between two tasks](#partial-execution-between-two-tasks)
 - [Pipeline configuration](#pipeline-configuration)
     - [HTSeq or featureCounts choice](#htseq-or-featurecounts-choice)
+    - [Qualimap](#qualimap)
     - [DElite](#delite)
+    - [pathfindR and RCPA inputs](#pathfindr-and-rcpa-inputs)
     - [pathfindR](#pathfindr)
     - [RCPA](#rcpa)
     - [Optional tasks](#optional-tasks)
@@ -85,7 +86,7 @@ Where:
 
 ## Running the pipeline with sample data
 
-It is possible to test the pipeline using our sample data available [here](https://static.sing-group.org/data/compi-rnaseq-pipeline/data-compi-rnaseq-pipeline-2.0_chr_X.zip) or [here](https://static.sing-group.org/data/compi-rnaseq-pipeline/data-compi-rnaseq-pipeline-2.0_HCC1395.zip).
+It is possible to test the pipeline using our sample data available [here](https://static.sing-group.org/data/compi-rnaseq-pipeline/data-compi-rnaseq-pipeline-v2_chr_X.zip) or [here](https://static.sing-group.org/data/compi-rnaseq-pipeline/data-compi-rnaseq-pipeline-v2_HCC1395.zip).
 
 Download any of the ZIP files and decompress them in your local file system. Edit the `compi.parameters` file to update the `working_dir` parameter so that it points to to the path where you have the decompressed data.
 
