@@ -2,7 +2,7 @@
 
 A Compi RNA-Seq pipeline to perform differential expression using DElite and enrichment analysis using RCPA and pathfindR.
 
-A Docker image is available for this pipeline in [this Docker Hub repository](https://hub.docker.com/r/singgroup/compi-rnaseq). In order to run the pipeline locally, have a look at the [required dependencies](DEPENDENCIES.md).
+A Docker image is available for this pipeline in [this Docker Hub repository](https://hub.docker.com/r/singgroup/compi-rnaseq). To run the pipeline locally, see the [required dependencies](DEPENDENCIES.md).
 
 ## Table of contents
 - [Using the Compi RNA-Seq pipeline image in Linux](#using-the-compi-rna-seq-pipeline-image-in-linux)
@@ -25,19 +25,19 @@ A Docker image is available for this pipeline in [this Docker Hub repository](ht
 
 ## Using the Compi RNA-Seq pipeline image in Linux
 
-To perform an analysis users must first:
+To perform an analysis, users must first:
 
 1. Initialize a working directory with the files required by the pipeline.
-2. Add the input data to be analyzed (fastQ reads, genomes, configuration files, and so on).
+2. Add the input data to be analyzed (FASTQ reads, genomes, configuration files, etc.).
 3. Configure the pipeline parameters.
 
-This section provides a comprehensive guide on how to perform these steps and the tools and scripts included in the pipeline image to do it easily.
+This section provides a comprehensive guide on how to perform these steps and describes the tools and scripts included in the pipeline image to do so easily.
 
 ### Initialize the working directory
 
-To start a new analysis, the first thing to do is build the directory tree in your local file system. This directory tree will be referred as the working directory and its structure is recognized and used by the pipeline during the analysis.
+To start a new analysis, the first step is to build the directory tree in your local file system. This directory tree will be referred to as the working directory, and its structure is recognized and used by the pipeline during the analysis.
 
-To build the working directory adapt the first line of the following code and run it:
+To build the working directory, adapt the first line of the following code and run it:
 ```sh
 WORKING_DIRECTORY=/path/to/the/working-directory
 
@@ -70,17 +70,17 @@ After running this command, the selected working directory should have the follo
 ```
 
 Where:
-- `README.txt` contains the next steps you need to do to run the analysis.
+- `README.txt` contains the next steps you need to follow to run the analysis.
 - `pipeline.png` contains the pipeline graph.
 - `compi.parameters` contains the paths and parameters needed for the analysis.
 - `run.sh` is the script to run the analysis.
 - `samples` is the folder where the input FASTQ files must be placed.
-  - It must also contain a `metadata.tsv` file with the samples metadata (names and groups).
+  - It must also contain a `metadata.tsv` file with the sample metadata (names and groups).
 - `genome` is the folder where the input genome must be placed.
 - `genes` is the folder where the input GTF annotation file must be placed.
-- `config` is the folder wher the input configuration files must be placed. It may contain:
-  - An optional file called `contrasts.tsv` with the DEA contrasts that must be performed (if not provided, the pipeline generates all combinations based on the information in the `metadata.tsv` file). 
-  - A fille called `pathfindR.tsv` indicating the genesets for enrichment (KEGG, Reactome, BioCarta, GO-All, GO-BP, GO-CC, or GO-MF; all for Homo sapiens) and the protein-protein interaction network (Biogrid, STRING, GeneMania, IntAct, KEGG, or mmu_STRING) for the pathfindR analysis. It is a two-column CSV file where the first column is the geneset and the second is the protein-protein interaction network. Lines starting with `#` are skipped and one pathfindR analysis for each line will be executed.
+- `config` is the folder where the input configuration files must be placed. It may contain:
+  - An optional file called `contrasts.tsv` with the DEA contrasts to be performed (if not provided, the pipeline generates all combinations based on the information in the `metadata.tsv` file).
+  - A file called `pathfindR.tsv` indicating the gene sets for enrichment (KEGG, Reactome, BioCarta, GO-All, GO-BP, GO-CC, or GO-MF; all for Homo sapiens) and the protein-protein interaction network (Biogrid, STRING, GeneMania, IntAct, KEGG, or mmu_STRING) for the pathfindR analysis. It is a two-column CSV file where the first column is the gene set and the second is the protein-protein interaction network. Lines starting with `#` are skipped, and one pathfindR analysis for each line will be executed.
   - An optional file called `rcpa.txt` with additional parameters for RCPA.
 
 ## Running the pipeline with sample data
