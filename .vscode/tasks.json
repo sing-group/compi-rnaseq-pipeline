@@ -2,8 +2,9 @@
     "version": "2.0.0",
     "options": {
         "env": {
-            "data_directory": "/media/hlfernandez/Almacenamiento/Data/Collaborations/Rosalinda/data-compi-rnaseq-pipeline-1.0.0/",
-            "single_task": "rcpa",
+            // Set 'data_directory' in your shell environment or a local .env file (not tracked by git)
+            // export data_directory=/path/to/your/data_directory"
+            "single_task": "qualimap",
             "from_task": "generate-pathfindr",
             "after_task": "samtools",
             "until_task": "pathfindr"
@@ -23,7 +24,7 @@
         {
             "label": "run",
             "type": "shell",
-            "command": "docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v ${data_directory}:${data_directory} singgroup/compi-rnaseq -pa ${data_directory}/parameters -r runner.xml"
+            "command": "source .env && docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v ${data_directory}:${data_directory} singgroup/compi-rnaseq -pa ${data_directory}/parameters -r runner.xml"
         },
         {
             "label": "build-and-run",
@@ -34,19 +35,19 @@
         {
             "label": "run single task",
             "type": "shell",
-            "command": "docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v ${data_directory}:${data_directory} -v /tmp:/tmp singgroup/compi-rnaseq -pa ${data_directory}/parameters -r runner.xml -st ${single_task} -o --logs ${data_directory}/compi/logs -n 5",
+            "command": "source .env && docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v ${data_directory}:${data_directory} -v /tmp:/tmp singgroup/compi-rnaseq -pa ${data_directory}/parameters -r runner.xml -st ${single_task} -o --logs ${data_directory}/compi/logs -n 5",
             "dependsOn": "build"
         },
         {
             "label": "run partially (from/until)",
             "type": "shell",
-            "command": "docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v ${data_directory}:${data_directory} -v /tmp:/tmp singgroup/compi-rnaseq -pa ${data_directory}/parameters -r runner.xml --from ${from_task} --until ${until_task} -o --logs ${data_directory}/compi/logs",
+            "command": "source .env && docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v ${data_directory}:${data_directory} -v /tmp:/tmp singgroup/compi-rnaseq -pa ${data_directory}/parameters -r runner.xml --from ${from_task} --until ${until_task} -o --logs ${data_directory}/compi/logs",
             "dependsOn": "build"
         },
         {
             "label": "run partially (after/until)",
             "type": "shell",
-            "command": "docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v ${data_directory}:${data_directory} -v /tmp:/tmp singgroup/compi-rnaseq -pa ${data_directory}/parameters -r runner.xml --after ${after_task} --until ${until_task} -o --logs ${data_directory}/compi/logs",
+            "command": "source .env && docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v ${data_directory}:${data_directory} -v /tmp:/tmp singgroup/compi-rnaseq -pa ${data_directory}/parameters -r runner.xml --after ${after_task} --until ${until_task} -o --logs ${data_directory}/compi/logs",
             "dependsOn": "build"
         },
         {
