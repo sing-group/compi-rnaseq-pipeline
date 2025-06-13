@@ -30,7 +30,7 @@ elif [ ! -f ${working_dir}/${dea_dir}/${dea}/${delite_dir}/${pathfindr_delite_fi
     exit 1
 fi
 
-results_dir=${working_dir}/${dea_dir}/${dea}/${delite_dir}/pathfindR
+results_dir=${working_dir}/${dea_dir}/${dea}/${delite_dir}/pathfindR/${gene_set}_${pin}
 
 skip_pathfindR_existing=${skip_pathfindR_existing:-no}
 if [ ${skip_pathfindR_existing} == "yes" ] && [ -d ${results_dir} ]; then
