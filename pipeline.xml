@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pipeline xmlns="http://www.sing-group.org/compi/pipeline-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <version>2.2.0</version>
+    <version>2.2.1</version>
 	<params>
 		<param name="working_dir" shortName="working_dir" global="true">The absolute path to the working directory.</param>
 
@@ -16,7 +16,7 @@
 		<param name="feature_counts_image" shortName="htfeature_counts_imageseq_count_image" defaultValue="pegi3s/feature-counts:2.0.0" global="true">The featureCounts Docker image</param>
 		<param name="delite_image" shortName="delite_image" defaultValue="bioinfolabcro/delite:v.1.2.3" global="true">The DElite Docker image</param>
 		<param name="sva_image" shortName="sva_image" defaultValue="pegi3s/r_sva:3.54.0" global="true">The R SVA Docker image</param>
-		<param name="annotationdbi_image" shortName="annotationdbi_image" defaultValue="pegi3s/r_annotationdbi:3.20.0" global="true">The R AnnotationDbi Docker image</param>
+		<param name="annotationdbi_image" shortName="annotationdbi_image" defaultValue="pegi3s/r_annotationdbi:1.68.0" global="true">The R AnnotationDbi Docker image</param>
 		<param name="pca" shortName="pca" defaultValue="pca" global="true">The executable of the pca command.</param>
 		<param name="pca_image" shortName="pca_image" defaultValue="singgroup/sklearn_pca" global="true">The scikit-learn PCA Docker image</param>
 		<param name="pca_batch_correction_image" shortName="pca_batch_correction_image" defaultValue="singgroup/sklearn_pca" global="true">The scikit-learn PCA Docker image</param>

@@ -10,7 +10,7 @@ function get_compi_parameter {
     cat "${1}" | grep "${2}=" | cut -d'=' -f2
 }
 
-COMPI_RNA_SEQ_VERSION=${COMPI_RNA_SEQ_VERSION-2.2.0-SNAPSHOT}
+COMPI_RNA_SEQ_VERSION=${COMPI_RNA_SEQ_VERSION-2.2.1}
 
 FULL_COMPI_PARAMS_FILE=$1
 ADDITIONAL_COMPI_PARAMS="${2:--num-tasks 5}"
