@@ -218,7 +218,7 @@ The Compi RNA-Seq pipeline is developed by the [SING Research Group](https://www
 
 ## Publications
 
-- R. Di Gerlando; S. Gagliardi; H. López-Fernández (2025) A new Compi pipeline for RNA-Seq differential expression analysis. 19th International Conference on Practical Applications of Computational Biology & Bioinformatics: PACBB 2025. Lille, France. 25 - June
+- R. Di Gerlando; S. Gagliardi; H. López-Fernández (2025) <a href="https://doi.org/10.1007/978-3-032-10634-6_10">A new Compi pipeline for RNA-Seq differential expression analysis</a>. 19th International Conference on Practical Applications of Computational Biology & Bioinformatics: PACBB 2025. Lille, France. 25 - June
 
 ### Related work
 
