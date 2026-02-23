@@ -1,4 +1,4 @@
-# compi-rnaseq-pipeline [![license](https://img.shields.io/badge/license-MIT-brightgreen)](https://github.com/sing-group/compi-rnaseq-pipeline) [![license](https://img.shields.io/badge/version-2.2.1-brightgreen)](https://github.com/sing-group/compi-rnaseq-pipeline) [![dockerhub](https://img.shields.io/badge/hub-docker-blue)](https://hub.docker.com/r/singgroup/compi-rnaseq) [![compihub](https://img.shields.io/badge/hub-compi-blue)](https://www.sing-group.org/compihub/explore/5d09fb2a1713f3002fde86e2)
+# compi-rnaseq-pipeline [![license](https://img.shields.io/badge/license-MIT-brightgreen)](https://github.com/sing-group/compi-rnaseq-pipeline) [![license](https://img.shields.io/badge/version-2.3.0-brightgreen)](https://github.com/sing-group/compi-rnaseq-pipeline) [![dockerhub](https://img.shields.io/badge/hub-docker-blue)](https://hub.docker.com/r/singgroup/compi-rnaseq) [![compihub](https://img.shields.io/badge/hub-compi-blue)](https://www.sing-group.org/compihub/explore/5d09fb2a1713f3002fde86e2)
 
 A Compi RNA-Seq pipeline to perform differential expression using DElite and enrichment analysis using RCPA and pathfindR.
 
