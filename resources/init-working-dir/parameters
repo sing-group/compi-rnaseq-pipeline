@@ -17,6 +17,8 @@ reference_annotation=genes/Homo_sapiens.GRCh38.113.chr.gtf
 #qualimap_additional_args=--java-mem-size=2G
 #batch_correction=batch_column
 #counts_method=htseq
+#feature_counts_strandedness=2
+#htseq_strandedness=yes
 
 # enable_trimmomatic
 #trimmomatic_parameters=ILLUMINACLIP:/Trimmomatic/adapters/TruSeq3-PE-2.fa:2:30:10 SLIDINGWINDOW:4:15 MINLEN:36

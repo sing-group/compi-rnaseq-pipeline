@@ -126,6 +126,22 @@ This subsection explains the main configuration parameters to customize the pipe
 
 By default, the software used for counting reads is featureCounts. This is because *featurecounts* is the default value of the `counts_method` parameter. To change it, include `counts_method=htseq` in your Compi parameters file.
 
+In addition, parameters `feature_counts_strandedness` and `htseq_strandedness` allow specifying the strandedness of the sequencing library. Defaults (`2` and `reverse`) match typical dUTP-based stranded protocols (e.g., TruSeq Stranded). For unstranded data, override these values in the `compi.parameters` file:
+
+```
+feature_counts_strandedness=0
+htseq_strandedness=no
+```
+
+For forward/same-strand libraries, use:
+
+```
+feature_counts_strandedness=1
+htseq_strandedness=yes
+```
+
+To determine the correct strandedness empirically, run [RSeQC's `infer_experiment.py`](http://rseqc.sourceforge.net/#infer-experiment-py) on a sample BAM file, or check Qualimap's RNA-Seq QC report (available after running the `qualimap` task) for the "SSP estimation (fwd/rev)" score: values close to 1.0 indicate forward-stranded, close to 0.0 indicate reverse-stranded, and around 0.5 indicate unstranded libraries.
+
 ### Qualimap
 
 This tool may require more RAM memory than the default setting. To increase it, include the `qualimap_additional_args` in the Compi parameters file with the value `--java-mem-size=2G`.

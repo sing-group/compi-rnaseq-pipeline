@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pipeline xmlns="http://www.sing-group.org/compi/pipeline-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <version>2.2.1</version>
+    <version>2.3.0</version>
 	<params>
 		<param name="working_dir" shortName="working_dir" global="true">The absolute path to the working directory.</param>
 
@@ -43,6 +43,8 @@
 		<flag name="samtools_keep_sam_files" shortName="samtools_keep_sam_files" global="true">Whether to keep samtools *.sam files after conversion.</flag>
 		<param name="batch_correction" shortName="batch_correction" defaultValue="none" global="true">The factor (column in metadata) for batch correction (or "interaction" to use a combination of all of them). If "none", no batch correction is applied.</param>
 		<param name="counts_method" shortName="counts_method" defaultValue="featurecounts" global="true">The software for counting reads, either featurecounts or htseq.</param>
+		<param name="feature_counts_strandedness" shortName="fc_strand" defaultValue="2" global="true">featureCounts strandedness: 0 (unstranded), 1 (stranded/forward), 2 (reversely stranded). Default: 2.</param>
+        <param name="htseq_strandedness" shortName="htseq_strand" defaultValue="reverse" global="true">HTSeq strandedness: no (unstranded), yes (stranded/forward), reverse (reversely stranded). Default: reverse.</param>
 		<flag name="enable_trimmomatic" shortName="enable_trimmomatic" global="true">Enable the Trimmomatic trimming step before alignment.</flag>
 		<param name="trimmomatic_parameters" shortName="trimmomatic_parameters" defaultValue="ILLUMINACLIP:/Trimmomatic/adapters/TruSeq3-PE-2.fa:2:30:10 SLIDINGWINDOW:4:15 MINLEN:36" global="true">Parameters to pass to Trimmomatic as a space-separated string. Example: ILLUMINACLIP:TruSeq3-PE-2.fa:2:30:10 SLIDINGWINDOW:4:15 MINLEN:36</param>
 		<flag name="trimmomatic_keep_intermediate_files" shortName="trimmomatic_keep_intermediate_files" global="true">Whether to keep Trimmomatic files (unpaired reads) after moving paired reads.</flag>
@@ -205,7 +207,7 @@
 			as="sample_name"
 			if="[[ ${counts_method} == 'htseq' ]]"
 		>
-			${htseq_count} --format bam --order pos --mode intersection-strict --stranded reverse --minaqual 1 --type exon --idattr gene_id ${working_dir}/${samples_alignment_dir}/${sample_name}.bam ${working_dir}/${reference_annotation} > ${working_dir}/${samples_htseqcount_dir}/${sample_name}.tsv
+			${htseq_count} --format bam --order pos --mode intersection-strict --stranded ${htseq_strandedness} --minaqual 1 --type exon --idattr gene_id ${working_dir}/${samples_alignment_dir}/${sample_name}.bam ${working_dir}/${reference_annotation} > ${working_dir}/${samples_htseqcount_dir}/${sample_name}.tsv
 		</foreach>
 		<foreach 
 			id="feature-counts" after="*samtools"
@@ -214,7 +216,7 @@
 			as="sample_name"
 			if="[[ ${counts_method} == 'featurecounts' ]]"
 		>
-			${feature_counts} -F GTF -a ${working_dir}/${reference_annotation} -o ${working_dir}/${samples_feature_counts_dir}/${sample_name}.txt -t exon -g gene_id -s 2 -Q 1 -B -p --primary ${working_dir}/${samples_alignment_dir}/${sample_name}.bam
+			${feature_counts} -F GTF -a ${working_dir}/${reference_annotation} -o ${working_dir}/${samples_feature_counts_dir}/${sample_name}.txt -t exon -g gene_id -s ${feature_counts_strandedness} -Q 1 -B -p --primary ${working_dir}/${samples_alignment_dir}/${sample_name}.bam
 		</foreach>
 		<foreach 
 			id="feature-counts-postprocessing" after="*feature-counts"

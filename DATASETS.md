@@ -9,6 +9,9 @@ Download and decompress it, and move into the new directory, where you will find
 ## Compatible versions
 
 - 2.0.0
+- 2.2.0
+- 2.2.1
+- 2.3.0
 
 # HCC1395 dataset
 
@@ -21,3 +24,6 @@ Download and decompress it, and move into the new directory, where you will find
 ## Compatible versions
 
 - 2.0.0
+- 2.2.0
+- 2.2.1
+- 2.3.0
